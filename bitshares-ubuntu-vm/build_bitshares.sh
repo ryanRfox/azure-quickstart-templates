@@ -19,7 +19,7 @@ NPROC=$(nproc)
 echo "nproc: $NPROC"
 
 ################################################################
-# Build BitShares from source, then start witness node         #
+# Build BitShares from source, then set it start on boot       #
 ################################################################
 cd /usr/local
 time git clone https://github.com/bitshares/bitshares-2.git
@@ -28,11 +28,17 @@ time git submodule update --init --recursive --force
 time cmake -DCMAKE_BUILD_TYPE=Release .
 time make -j$NPROC
 
+printf '%s\n%s\n' '#!/bin/sh' '/usr/local/bitshares-2/programs/witness_node/witness_node --rpc-endpoint=127.0.0.1:8090' >> /etc/init.d/bitshares
+chmod +x /etc/init.d/bitshares
+update-rc.d bitshares defaults
+
+
 ################################################################
 # BitShares is now built and installed, time to reboot         #
+################################################################
 reboot
 
 ################################################################
 # Connect to the host via SSH, then start cli wallet           #
-# sudo /usr/local/bitshares-2/programs/cli_wallet/./cli_wallet #
+# sudo /usr/local/bitshares-2/programs/cli_wallet/cli_wallet #
 ################################################################
