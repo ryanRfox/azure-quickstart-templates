@@ -37,7 +37,6 @@ update-rc.d bitshares defaults
 # BitShares is now built and installed, time to reboot         #
 ################################################################
 reboot
-exit 0
 
 ################################################################
 # Connect to the host via SSH, then start cli wallet           #
