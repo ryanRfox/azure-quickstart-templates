@@ -27,8 +27,10 @@ cd bitshares-2/
 time git submodule update --init --recursive --force
 time cmake -DCMAKE_BUILD_TYPE=Release .
 time make -j$NPROC
-cd programs/witness_node/
-./witness_node --rpc-endpoint=127.0.0.1:8090
+
+################################################################
+# BitShares is now built and installed, time to reboot         #
+reboot
 
 ################################################################
 # Connect to the host via SSH, then start cli wallet           #
