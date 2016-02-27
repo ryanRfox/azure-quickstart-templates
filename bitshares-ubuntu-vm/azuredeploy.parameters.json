@@ -12,7 +12,7 @@
       "value": "GEN-PASSWORD"
     },
     "installMethod": {
-      "value": "fromPPA"
+      "value": "From_PPA"
     },
     "vmSize": {
       "value": "Standard_A2"

@@ -13,7 +13,7 @@ ps axjf
 time apt-get -y update
 time apt-get install -y bitshares dphys-swapfile ntp
 
-if [ $1 = 'Build' ]; then
+if [ $1 = 'From_Source' ]; then
 #################################################################
 # Build BitShares from source                                   #
 #################################################################
@@ -55,6 +55,7 @@ update-rc.d bitshares defaults
 # BitShares installed. Reboot to start the witness node         #
 #################################################################
 reboot
+exit 0
 
 #################################################################
 # Connect to the host via SSH, then start cli wallet            #
