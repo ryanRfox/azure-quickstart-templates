@@ -28,7 +28,7 @@
         "From_Source"
       ],
       "metadata": {
-        "description": "Method to install bits."
+        "description": "Method to install bits. From_PPA: unofficial community bianaries.  From_Source: official BitShares repo on GitHub."
       }
     },    
     "vmSize": {
