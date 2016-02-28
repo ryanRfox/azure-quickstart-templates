@@ -22,15 +22,16 @@ echo "nproc: $NPROC"
 #################################################################
 # Install all necessary packages for building BitShares         #
 #################################################################
-#time apt-get && apt-get -y install git cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
+time apt-get && apt-get -y install git cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
 
-#cd /usr/local
-#time git clone https://github.com/bitshares/bitshares-2.git
-#cd bitshares-2/
-#time git submodule update --init --recursive --force
-#time cmake -DCMAKE_BUILD_TYPE=Release .
-#time make -j$NPROC
-#
+cd /usr/local
+time git clone https://github.com/bitshares/bitshares-2.git
+cd bitshares-2/
+time git submodule update --init --recursive
+time cmake -DCMAKE_BUILD_TYPE=Release .
+time make -j$NPROC
+cp /usr/local/bitshares-2/programs/witness_node/witness_node /usr/bin/witness_node
+cp /usr/local/bitshares-2/programs/cli_wallet/cli_wallet /usr/bin/cli_wallet
 
 else    
 #################################################################
@@ -55,7 +56,11 @@ update-rc.d bitshares defaults
 reboot
 exit 0
 
-#################################################################
-# Connect to host via SSH, then start cli wallet:               #
-# sudo /usr/local/bitshares-2/programs/cli_wallet/cli_wallet    #
-#################################################################
+##################################################################################################
+# Connect to host via SSH, then start cli wallet:                                                #
+# $sudo /usr/bin/cli_wallet --wallet_file=/usr/local/bitshares-2/programs/cli-wallet/wallet.json #
+# >set_password use_a_secure_password_but_check_your_shoulder_as_it_will_be_displayed_on_screen  #
+# >ctrl-d [will save the wallet and exit the client]                                             #
+# $nano /usr/local/bitshares-2/programs/cli-wallet/wallet.json                                   #
+# Learn more: http://docs.bitshares.eu                                                           #
+##################################################################################################
