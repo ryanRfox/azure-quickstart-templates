@@ -58,7 +58,7 @@ exit 0
 
 ##################################################################################################
 # Connect to host via SSH, then start cli wallet:                                                #
-# $sudo /usr/bin/cli_wallet --wallet_file=/usr/local/bitshares-2/programs/cli-wallet/wallet.json #
+# $sudo /usr/bin/cli_wallet --wallet-file=/usr/local/bitshares-2/programs/cli-wallet/wallet.json #
 # >set_password use_a_secure_password_but_check_your_shoulder_as_it_will_be_displayed_on_screen  #
 # >ctrl-d [will save the wallet and exit the client]                                             #
 # $nano /usr/local/bitshares-2/programs/cli-wallet/wallet.json                                   #
