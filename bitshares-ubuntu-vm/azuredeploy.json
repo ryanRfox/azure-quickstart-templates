@@ -199,11 +199,7 @@
         "typeHandlerVersion": "1.2",
         "settings": {
           "fileUris": [
-<<<<<<< HEAD
             "https://raw.githubusercontent.com/ryanrfox/azure-quickstart-templates/review/bitshares-ubuntu-vm/build_bitshares.sh"
-=======
-            "https://raw.githubusercontent.com/ryanrfox/azure-quickstart-templates/dev/bitshares-ubuntu-vm/build_bitshares.sh"
->>>>>>> dev
           ],
           "commandToExecute": "[concat('sh build_bitshares.sh ', parameters('installMethod'))]"
         }
