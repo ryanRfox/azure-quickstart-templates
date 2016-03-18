@@ -17,7 +17,7 @@
     "dnsLabelPrefix": {
        "type": "string",
        "metadata": {
-          "description": "DNS Label for the Public IP. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
+          "description": "Hostname assigned to the Public IP, also used as the VM Name. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
        }
     },
     "installMethod": {
@@ -57,7 +57,7 @@
     "subnetName": "BitSharesSubnet",
     "subnetPrefix": "10.0.0.0/24",
     "storageAccountType": "Standard_LRS",
-    "storageAccountName": "[replace(replace(tolower(concat('bitsharessa', uniquestring(resourceGroup().id))), '-',''),'.','')]",
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id, 'bitshares'))]",
     "publicIPAddressName": "BitSharesPublicIP",
     "publicIPAddressType": "Dynamic",
     "vmStorageAccountContainerName": "vhds",
@@ -188,20 +188,21 @@
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(variables('vmName'),'/newuserscript')]",
-      "apiVersion": "2015-05-01-preview",
       "location": "[resourceGroup().location]",
+      "apiVersion": "[variables('apiVersion')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
-        "typeHandlerVersion": "1.2",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/bitshares-ubuntu-vm/build_bitshares.sh"
+            "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/dev/bitshares-ubuntu-vm/build_bitshares-ui.sh"
           ],
-          "commandToExecute": "[concat('sh build_bitshares.sh ', parameters('installMethod'))]"
+          "commandToExecute": "[concat('sh build_bitshares-ui.sh ', parameters('installMethod'), reference(resourceId('Microsoft.Network/publicIPAddresses ', variables('publicIPAddressName'))).dnsSettings.fqdn')]"
         }
       }
     }
