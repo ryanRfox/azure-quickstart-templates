@@ -7,8 +7,7 @@ ps axjf
 
 ip=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 FQDN=$2
-echo "eth0: $ip"
-echo "FQDN: $FQDN"
+echo "FQDN: $FQDN\neth0: $ip" >> /usr/local/etc/install.log
 
 #################################################################
 # Update Ubuntu and install prerequisites for running BitShares #
