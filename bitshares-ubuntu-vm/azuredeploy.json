@@ -234,7 +234,7 @@
           "fileUris": [
             "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/dev/bitshares-ubuntu-vm/build_bitshares-ui.sh"
           ],
-          "commandToExecute": "[concat('sh build_bitshares-ui.sh ', parameters('installMethod'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses ', variables('publicIPAddressName'))).dnsSettings.fqdn)]" 
+          "commandToExecute": "[concat('sh build_bitshares-ui.sh ', parameters('installMethod'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn)]" 
         }
       }
     }
