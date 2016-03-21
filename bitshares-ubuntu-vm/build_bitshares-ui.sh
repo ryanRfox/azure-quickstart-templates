@@ -51,8 +51,7 @@ fi
 printf '%s\n%s\n' '#!/bin/sh' '/usr/bin/witness_node --rpc-endpoint='$ip':8090 -d /usr/local/bitshares-2/programs/witness_node/'>> /etc/init.d/bitshares
 chmod +x /etc/init.d/bitshares
 update-rc.d bitshares defaults
-
-/usr/bin/witness_node --rpc-endpoint=$ip:8090 -d /usr/local/bitshares-2/programs/witness_node/ & exit 0
+/etc/init.d/bitshares
 
 #################################################################
 # Build the UI codebase                                         #
@@ -68,7 +67,7 @@ update-rc.d bitshares defaults
 #################################################################
 # Configure webserver for UI                                    #
 #################################################################
-curl -sSL -o /etc/apache2/sites-available/bitshares2-ui.conf https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/dev/bitshares-ubuntu-vm/bitshares2-ui.conf
+sudo curl -sSL -o /etc/apache2/sites-available/bitshares2-ui.conf https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/dev/bitshares-ubuntu-vm/bitshares2-ui.conf
 a2dissite 000-default   # Disable the default Apache site
 a2ensite bitshares2-ui  # Enable Bitshares2-ui site
 service apache2 restart 
