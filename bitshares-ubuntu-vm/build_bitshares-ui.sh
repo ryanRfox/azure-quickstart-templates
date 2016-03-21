@@ -67,8 +67,7 @@ update-rc.d bitshares defaults
 #################################################################
 # Configure webserver for UI                                    #
 #################################################################
-cd /etc/apache2/sites-available/
-curl -O https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/dev/bitshares-ubuntu-vm/bitshares2-ui.conf --retry 3 --retry-delay 10 
+printf '<VirtualHost *:80>\n  DocumentRoot /usr/share/bitshares2-ui\n  ErrorLog ${APACHE_LOG_DIR}/error.log\n  CustomLog ${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>'>> /etc/apache2/sites-available/bitshares2-ui.conf
 a2dissite 000-default   # Disable the default Apache site
 a2ensite bitshares2-ui  # Enable Bitshares2-ui site
 service apache2 restart 
