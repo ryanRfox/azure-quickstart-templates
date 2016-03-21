@@ -51,7 +51,7 @@ fi
 printf '%s\n%s\n' '#!/bin/sh' '/usr/bin/witness_node --rpc-endpoint='$ip':8090 -d /usr/local/bitshares-2/programs/witness_node/'>> /etc/init.d/bitshares
 chmod +x /etc/init.d/bitshares
 update-rc.d bitshares defaults
-/etc/init.d/bitshares
+/etc/init.d/bitshares & exit 0
 
 #################################################################
 # Build the UI codebase                                         #
