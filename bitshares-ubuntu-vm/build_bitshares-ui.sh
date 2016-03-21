@@ -7,7 +7,8 @@ ps axjf
 
 ip=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 FQDN=$2
-echo "FQDN: $FQDN\neth0: $ip" >> /usr/local/etc/install.log
+echo "FQDN: $FQDN"
+echo "eth0: $ip"
 
 #################################################################
 # Update Ubuntu and install prerequisites for running BitShares #
@@ -46,14 +47,6 @@ time apt-get install -y bitshares2-cli bitshares2
 fi
 
 #################################################################
-# Configure BitShares witeness node to auto start at boot       #
-#################################################################
-printf '%s\n%s\n' '#!/bin/sh' '/usr/bin/witness_node --rpc-endpoint='$ip':8090 -d /usr/local/bitshares-2/programs/witness_node/'>> /etc/init.d/bitshares
-chmod +x /etc/init.d/bitshares
-update-rc.d bitshares defaults
-/etc/init.d/bitshares & exit 0
-
-#################################################################
 # Build the UI codebase                                         #
 #################################################################
 #
@@ -71,6 +64,14 @@ printf '<VirtualHost *:80>\n  DocumentRoot /usr/share/bitshares2-ui\n  ErrorLog 
 a2dissite 000-default   # Disable the default Apache site
 a2ensite bitshares2-ui  # Enable Bitshares2-ui site
 service apache2 restart 
+
+#################################################################
+# Configure BitShares witeness node to auto start at boot       #
+#################################################################
+printf '%s\n%s\n' '#!/bin/sh' '/usr/bin/witness_node --rpc-endpoint='$ip':8090 -d /usr/local/bitshares-2/programs/witness_node/'>> /etc/init.d/bitshares
+chmod +x /etc/init.d/bitshares
+update-rc.d bitshares defaults
+/etc/init.d/bitshares & exit 0
 
 ##################################################################################################
 # Connect to the web wallet by pointing your web browser to:                                     #
