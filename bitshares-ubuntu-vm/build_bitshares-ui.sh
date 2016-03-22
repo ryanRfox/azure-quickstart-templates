@@ -27,6 +27,9 @@ echo "nproc: $NPROC"
 #################################################################
 time apt-get -y install git cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
 
+#################################################################
+# Build the CLI codebase                                         #
+#################################################################
 cd /usr/local
 time git clone https://github.com/bitshares/bitshares-2.git
 cd /usr/local/bitshares-2
@@ -36,9 +39,14 @@ time make -j$NPROC
 cp /usr/local/bitshares-2/programs/witness_node/witness_node /usr/bin/witness_node
 cp /usr/local/bitshares-2/programs/cli_wallet/cli_wallet /usr/bin/cli_wallet
 
+#################################################################
+# Build the UI codebase                                         #
+#################################################################
+#
+
 else    
 #################################################################
-# Install BitShares from PPA                                    #
+# Install BitShares CLI + UI from PPA                                    #
 #################################################################
 time add-apt-repository -y ppa:bitshares/bitshares
 time apt-get -y update
@@ -46,10 +54,6 @@ time apt-get install -y bitshares2-cli bitshares2
 
 fi
 
-#################################################################
-# Build the UI codebase                                         #
-#################################################################
-#
 
 #################################################################
 # Configure UI to default to this VM (Replaces OpenLedger)      #
@@ -80,7 +84,8 @@ update-rc.d bitshares defaults
 # Learn more: http://docs.bitshares.eu                                                           #
 #                                                                                                #
 # Connect to host via SSH, then start cli wallet:                                                #
-# $sudo /usr/bin/cli_wallet --wallet-file=/usr/local/bitshares-2/programs/cli-wallet/wallet.json #
+# ip=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
+# $sudo /usr/bin/cli_wallet --server-rpc-endpoint=ws://'$ip':8090 --wallet-file=/usr/local/bitshares-2/programs/cli-wallet/wallet.json #
 # >set_password use_a_secure_password_but_check_your_shoulder_as_it_will_be_displayed_on_screen  #
 # >ctrl-d [will save the wallet and exit the client]                                             #
 # $nano /usr/local/bitshares-2/programs/cli-wallet/wallet.json                                   #
