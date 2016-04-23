@@ -50,8 +50,8 @@
   "variables": {
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
+    "imageSKU": "16.04LTS",
     "OSDiskName": "BitSharesOSDisk",
-    "imageSKU": "16.04 LTS",
     "nicName": "BitSharesNic",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "BitSharesSubnet",
