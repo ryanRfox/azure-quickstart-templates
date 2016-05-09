@@ -12,13 +12,6 @@ INSTALL_METHOD=$1
 USER_NAME=$2
 DESIRED_NAME=$3
 
-cat >/home/vars.txt <<EOL
-$NPROC
-$INSTALL_METHOD
-$USER_NAME
-$DESIRED_NAME
-EOL
-
 #################################################################
 # Update Ubuntu and install prerequisites for launching Steemd  #
 #################################################################
@@ -61,9 +54,9 @@ ExecStart=/usr/bin/steemd --rpc-endpoint=127.0.0.1:8090 \
 WantedBy=multi-user.target
 EOL
 
-cp /lib/systemd/system/steem.service /home/$USER_NAME/steem.service
 systemctl daemon-reload
 service steem start
+sleep 10
 
 #################################################################
 # Configure cli_wallet service, then start                      #
@@ -87,6 +80,7 @@ EOL
 
 systemctl daemon-reload
 service cli_wallet start
+sleep 10
 
 #################################################################
 # Generate the private key for mining on this virtual machine   #
@@ -94,8 +88,8 @@ service cli_wallet start
 curl -o /home/$USER_NAME/brain_key.json --data '{"jsonrpc": "2.0", "method": "call", "params": [0,"suggest_brain_key",[]], "id": 2}' http://127.0.0.1:8092/rpc
 WIF_PRIV_KEY=$( cat /home/$USER_NAME/brain_key.json | jq '.result.wif_priv_key' )
 
-#service cli_wallet stop
-#service steem stop
+service cli_wallet stop
+service steem stop
 
 #################################################################
 # Re-Configure steem service with private settings, then start  #
@@ -124,8 +118,8 @@ ExecStart=/usr/bin/steemd --rpc-endpoint=127.0.0.1:8090 \
 WantedBy=multi-user.target
 EOL
 
-#systemctl daemon-reload
-#service steem start
+systemctl daemon-reload
+service steem start
 
 #################################################################
 # Steemd is now actively mining the desired name using the      #
