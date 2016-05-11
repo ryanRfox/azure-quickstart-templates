@@ -103,7 +103,6 @@ Environment=statedir=/home/$USER_NAME/steem/witness_node
 ExecStartPre=/bin/mkdir -p /home/$USER_NAME/steem/witness_node
 ExecStart=/usr/bin/steemd --rpc-endpoint=127.0.0.1:8090 \
 --witness='"$DESIRED_NAME"' \
---private-key=$WIF_PRIV_KEY \
 --miner='["$DESIRED_NAME",$WIF_PRIV_KEY]' \
 --mining-threads=$NPROC \
 -s steem.kushed.com:2001 \
