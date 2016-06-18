@@ -7,22 +7,29 @@ set -x
 date
 ps axjf
 
+NPROC=$(nproc)
+INSTALL_METHOD=$1
+USER_NAME=$2
+
 #################################################################
 # Update Ubuntu and install prerequisites for running BitShares #
 #################################################################
 time apt-get -y update
-time apt-get install -y dphys-swapfile ntp
+time apt-get install -y ntp
 
-if [ $1 = 'From_Source' ]; then
+if [ $INSTALL_METHOD = 'From_PPA' ]; then
+#################################################################
+# Install BitShares from PPA                                    #
+#################################################################
+time add-apt-repository -y ppa:bitshares/bitshares
+time apt-get -y update
+time apt-get install -y bitshares2-cli
+
+else    
 #################################################################
 # Build BitShares from source                                   #
 #################################################################
-NPROC=$(nproc)
-echo "nproc: $NPROC"
-#################################################################
-# Install all necessary packages for building BitShares         #
-#################################################################
-time apt-get && apt-get -y install git cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
+time apt-get -y install git cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
 
 cd /usr/local
 time git clone https://github.com/bitshares/bitshares-2.git
@@ -34,28 +41,26 @@ time make -j$NPROC
 cp /usr/local/bitshares-2/programs/witness_node/witness_node /usr/bin/witness_node
 cp /usr/local/bitshares-2/programs/cli_wallet/cli_wallet /usr/bin/cli_wallet
 
-else    
-#################################################################
-# Install BitShares from PPA                                    #
-#################################################################
-time add-apt-repository -y ppa:bitshares/bitshares
-time apt-get -y update
-time apt-get install -y bitshares2-cli
-
 fi
 
 #################################################################
-# Configure BitShares witeness node to auto start at boot       #
+# Configure bitshares service                                   #
 #################################################################
-printf '%s\n%s\n' '#!/bin/sh' '/usr/bin/witness_node --rpc-endpoint=127.0.0.1:8090 -d /usr/local/bitshares-2/programs/witness_node/'>> /etc/init.d/bitshares
-chmod +x /etc/init.d/bitshares
-update-rc.d bitshares defaults
+cat >/lib/bitsharesd/system/bitshares.service <<EOL
+[Unit]
+Description=Job that runs bitshares daemon
+[Service]
+Type=simple
+Environment=statedir=/home/$USER_NAME/bitshares/witness_node
+ExecStartPre=/bin/mkdir -p /home/$USER_NAME/bitshares/witness_node
+ExecStart=/usr/bin/bitsharesd --rpc-endpoint=127.0.0.1:8090 \
+-d /home/$USER_NAME/bitshares/witness_node
+[Install]
+WantedBy=multi-user.target
+EOL
 
-#################################################################
-# BitShares installed. Reboot host to start the witness node    #
-#################################################################
-reboot
-exit 0
+systemctl daemon-reload
+service bitshares start
 
 ##################################################################################################
 # Connect to host via SSH, then start cli wallet:                                                #
