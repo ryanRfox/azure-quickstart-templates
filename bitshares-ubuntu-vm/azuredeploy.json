@@ -22,9 +22,8 @@
     },
     "installMethod": {
       "type": "string",
-      "defaultValue": "From_PPA",
+      "defaultValue": "From_Source",
       "allowedValues": [
-        "From_PPA",
         "From_Source"
       ],
       "metadata": {
