@@ -5,4 +5,4 @@
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
-This template uses the Azure Linux CustomScript extension to deploy a BitShares Node containing both a witness node and graphical user interface web wallet.  The deployment template creates an Ubuntu 16.04 LTS VM, installs the BitShares witness node and GUI wallet.  You may select to build from source or install from PPA.   
+This template uses the Azure Linux CustomScript extension to deploy a BitShares Node containing both a witness node and graphical user interface web wallet.  The deployment template creates an Ubuntu 16.04 LTS VM, installs the BitShares witness node and GUI wallet by building from source.   
