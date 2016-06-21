@@ -42,16 +42,16 @@ When you click the *Deploy to Azure* icon above, you need to specify the followi
 1. Assign a secure password `> set_password use_a_secure_password_here` (note: displayed on screen)
 1. Unlock the wallet `> unlock my_secure_password_from_above` the prompt will change to `unlocked >>>`
 1. Check the sync status of the blockchain `> info` 
-⋅⋅1. Within the results, note the values for `"time"` and `"head_block_age"`
-⋅⋅1. While syncing these values will be the time of the synced block and how old that block is
-⋅⋅1. Syncing is complete when these values are just a few seconds old
+  1. Within the results, note the values for `"time"` and `"head_block_age"`
+  1. While syncing these values will be the time of the synced block and how old that block is
+  1. Syncing is complete when these values are just a few seconds old
 1. Wait a couple of hours for your desired name to be mined on the blockchain
 1. Check the status of your desired name within the Steem blockchain `> get_account my_desired_name` where my_desired_name is the name you supplied for `desiredName` in the template.
-⋅⋅1. The response including `!accounts.empty(): Unknown account` indicates the name is not yet mined on the blockchain
-⋅⋅1. A successful response will include your desired `"name"` field and the public key representing it
+  1. The response including `!accounts.empty(): Unknown account` indicates the name is not yet mined on the blockchain
+  1. A successful response will include your desired `"name"` field and the public key representing it
 1. Import your account to the wallet
-⋅⋅1. Ensure the wallet is unlocked
-⋅⋅1. Use the private key from your ~/brain_key.json file `unlocked >>> import_key 5yourPrivateKeyStartsWith5...`
+  1. Ensure the wallet is unlocked
+  1. Use the private key from your ~/brain_key.json file `unlocked >>> import_key 5yourPrivateKeyStartsWith5...`
 1. Exit to save the wallet using `ctrl-d` 
 1. View your wallet: `nano ~/steem/cli_wallet/wallet.json`
 
@@ -77,4 +77,3 @@ If after attempting to start the steem service as above and the response remains
 This will drop the blockchain database and download it anew from network peers.
 * The `cli_wallet` will not connect to withness_node
 The `cli_wallet` has a dependency on the `steem.service` being in the `Active: active (running)` state. Verify the current as noted above. 
-
