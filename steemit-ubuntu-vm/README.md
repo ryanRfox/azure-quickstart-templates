@@ -1,8 +1,6 @@
 # Steem Blockchain Node on Ubuntu VM
 
-This template delivers the Steem network to your VM in about 15 mintues (PPA install).  Everything you need to get started using the Steem blockchain from the command line is included. 
-You may select to build from source or install from the community provided Personal Package Archive (PPA).  Once installed, the 'witnes_node' will begin syncing the public blockchain. 
-You may then connect via SSH to the VM and launch the 'cli-wallet' to interface with the blockchain.
+This template mines your desired name into the Steem blogchain. With your name successfully registered, you may begin posting messages thru the included CLI interface, or use the [Steemit web interface](https://steemit.com). Everything you need to get started using the Steem blockchain from the command line is included. First, the Azuer virtual machine downloads the [Steem source code](https://github.com/steemit/steem) from GitHub. Next, the project builds, configures and starts the `steem service` using your supplied Azure template values. Finally, the public blockchain is synced and your desired name will be mined. Please check your [name availability](https://steemd.com/api/account/exists?name=myname) proir to submitting the template, as it must be unique.
 
 # Steemit witness node Ubuntu 16.04 LTS VM
 
@@ -12,8 +10,7 @@ You may then connect via SSH to the VM and launch the 'cli-wallet' to interface 
 # What is Steem?
 
 ```
-Steem is an industrial-grade financial blockchain smart contracts platform.  Built using the latest in
-industry research, Steem delivers a decentralized financial platform with speeds approaching NASDAQ. 
+Steem is a blockchain-based social media platform where anyone can earn rewards. Learn more about <a href="https://steem.io">Steem</a>. 
 ```
 
 # Template Parameters
@@ -23,9 +20,8 @@ When you click the Deploy to Azure icon above, you need to specify the following
 * `adminUsername`: This is the account for connecting to your Steem host.
 * `adminPassword`: This is your password for the host.  Azure requires passwords to have One upper case, one lower case, a special character, and a number.
 * `dnsLabelPrefix`: This is used as both the VM name and DNS name of your public IP address.  Please ensure an unique name.
-* `desiredName`: This is the name you intend to mine on the Steem blockchain. It must not yet exist on the Steem blockchain. Verify your desired name is available [here](https://steem.io/checkname).
-* `installMethod`: This tells Azure how to install the software bits.  The default is using the community provided PPA.  You may choose to install from source, but be advised this method takes substantially longer to complete.
-* `vmSize`: This is the size of the VM to use.  Recommendations: Use the A series for PPA installs, and D series for installations from source.  Notice: Once the blockchain is synced, resize your VM to A1, as the Steem witness_node requires a small resource footprint. 
+* `desiredName`: This is the name you intend to mine on the Steem blockchain. [Verify your desired name is available](https://steemd.com/api/account/exists?name=myname).
+* `vmSize`: This is the size of the VM to use.Recommendation: Mining a name is CPU intensive. Selecting a multi core instance will probabilistically reduce the time to successfully mine your desired name.
 
 # Getting Started Tutorial
 
@@ -33,11 +29,22 @@ When you click the Deploy to Azure icon above, you need to specify the following
 * Complete the template parameters, choose your resource group, accept the terms and click Create
 * Wait about 15 minutes for the VM to spin up and install the bits
 * Connect to the VM via SSH using the DNS name assigned to your Public IP
-* Launch the cli-wallet: `sudo /usr/bin/cli_wallet --wallet-file=~/Steem/programs/cli-wallet/wallet.json`
-* Assign a secure password `>set_password use_a_secure_password_here` (note: displayed on screen)
-* `ctrl-d` will save the wallet and exit the client
-* View your wallet: `nano ~/Steem/programs/cli-wallet/wallet.json`
-* Wait a couple of hours for your desired name to be mined on the blockchain. 
+* Launch the cli-wallet: `sudo ~/launch_steem_wallet.sh`
+* Assign a secure password `> set_password use_a_secure_password_here` (note: displayed on screen)
+* Unlock the wallet `> unlock my_secure_password_from_above` the prompt will change to `unlocked >>>`
+* Check the sync status of the blockchain `> info` 
+* * Within the results, note the values for `"time"` and `"head_block_age"`
+* * While syncing these values will be the time of the synced block and how old that block is
+* * Syncing is complete when these values are just a few seconds old
+* Wait a couple of hours for your desired name to be mined on the blockchain
+* Check the status of your desired name within the Steem blockchain `> get_account my_desired_name` where my_desired_name is the name you supplied for `desiredName` in the template.
+* * The response including `!accounts.empty(): Unknown account` indicates the name is not yet mined on the blockchain
+* * A successful response will include your desired `"name"` field and the public key representing it
+* Import your account to the wallet
+* * Ensure the wallet is unlocked
+* * Use the private key from your ~/brain_key.json file `unlocked >>> import_key 5yourPrivateKeyStartsWith5...`
+* Exit to save the wallet using `ctrl-d` 
+* View your wallet: `nano ~/steem/cli_wallet/wallet.json`
 * Learn more: [https://docs.steem.io](https://docs.steem.io)   
 
 # Troubleshooting
