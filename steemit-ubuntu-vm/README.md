@@ -1,6 +1,6 @@
 # Steem on Ubuntu 16.04 LTS VM
 
-This template mines your desired name into the Steem _blogchain_. With your name successfully registered, you may begin posting messages thru the included CLI interface, or use the [Steemit web interface](https://steemit.com). Everything you need to get started using the Steem blockchain from the command line is included. First, the Azuer virtual machine downloads the [Steem source code](https://github.com/steemit/steem) from GitHub. Next, the project builds, configures and starts the `steem service` using your supplied Azure template values. Finally, the public blockchain is synced and your desired name will be mined. Please check your [name availability](https://steemd.com/api/account/exists?name=myname) proir to submitting the template, as it must be unique.
+This template mines your desired name into the Steem _blogchain_. With your name successfully registered, you may begin posting messages and comments thru the included command line interface, or use your credentials at the [Steemit web interface](https://steemit.com). Steem is just a *Deploy to Azure* click away.
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FryanRfox%2Fazure-quickstart-templates%2Fissue2%2Fsteemit-ubuntu-vm%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FryanRfox%2Fazure-quickstart-templates%2Fissue2%2Fsteemit-ubuntu-vm%2Fazuredeploy.json" target="_blank"><img src="http://armviz.io/visualizebutton.png"/></a>
@@ -9,18 +9,31 @@ This template mines your desired name into the Steem _blogchain_. With your name
 
 > Steem is a blockchain-based social media platform where anyone can earn rewards. 
 
+# Deployment Process
+
+1. Submit the Azure deployment template
+1. Acquire your credentials
+1. Begin blogging
+
 # Template Parameters
 
-When you click the Deploy to Azure icon above, you need to specify the following template parameters:
+When you click the *Deploy to Azure* icon above, you need to specify the following template parameters:
 
-* `adminUsername`: This is the account for connecting to your Steem host.
-* `adminPassword`: This is your password for the host.  Azure requires passwords to have One upper case, one lower case, a special character, and a number.
-* `dnsLabelPrefix`: This is used as both the VM name and DNS name of your public IP address.  Please ensure an unique name.
-* `desiredName`: This is the name you intend to mine on the Steem blockchain. [Verify your desired name is available](https://steemd.com/api/account/exists?name=myname).
-* `vmSize`: This is the size of the VM to use.Recommendation: Mining a name is CPU intensive. Selecting a multi core instance will probabilistically reduce the time to successfully mine your desired name.
+* `adminUsername`: This is the account for connecting to your Azure virtual machine running the Steem client.
+* `adminPassword`: This is your password for the host.  Azure requires passwords to have one upper case, one lower case, a special character, and a number.
+* `dnsLabelPrefix`: This is used as both the VM name and DNS name of your public IP address.  Please ensure it is unique within your subscription namespace.
+* `desiredName`: This is the name you intend to mine into the Steem blockchain. [Verify your desired name is available](https://steemd.com/api/account/exists?name=myname).
+* `vmSize`: This is the size of the VM to use. Recommendation: Mining a name is CPU intensive. Selecting a multi core instance will probabilistically reduce the time to successfully mine your desired name.
+
+# What the Template Actually Does
+
+1. *Download:* The Azure virtual machine downloads the [Steem source code](https://github.com/steemit/steem) from GitHub
+1. *Build:* The Steem project gets built, configured and the `steem service` starts
+1. *Mine:* Once the public blockchain is synced your desired name will be mined
 
 # Getting Started Tutorial
 
+1. Please check your [name availability](https://steemd.com/api/account/exists?name=myname) prior to submitting the template, as it must be unique
 1. Click the `Deploy to Azure` icon above
 1. Complete the template parameters, choose your resource group, accept the terms and click Create
 1. Wait about 15 minutes for the VM to spin up and install the bits
@@ -55,10 +68,10 @@ Steem is Copyright (c) 2016 Steemit, Inc. with portions Copyright (c) 2015 Crypt
 * Check current status of `steem service` 
 Issuing `service steem status` will return the current state of the steem daemon. Normal operation will return:
 `Active: active (running)`
-* The `steem serivce status` is inactive (dead)
+* The `steem service status` is inactive (dead)
 If the response contains `Active: inactive (dead)` please start the service:
 `service steem start`
-* The `steem serivce` fails to start
+* The `steem service` fails to start
 If after attempting to start the steem service as above and the response remains `Active: inactive (dead)` please start the service with the addition of the `--resync-blockchain` switch:
 `service steem start --resync-blockchain` 
 This will drop the blockchain database and download it anew from network peers.
