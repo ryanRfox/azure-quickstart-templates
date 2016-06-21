@@ -94,11 +94,6 @@ service cli_wallet stop
 service steem stop
 
 #################################################################
-# Remove cli_wallet service                                     #
-#################################################################
-rm /lib/systemd/system/cli_wallet.service
-
-#################################################################
 # (OPTIONAL) Send the private keys by email iff the user made   #
 # the request in the Azure template.                            #
 #################################################################
@@ -146,7 +141,7 @@ service steem start
 cat >/home/$USER_NAME/launch_steem_wallet.sh <<EOL
 /usr/bin/cli_wallet -w /home/$USER_NAME/steem/cli_wallet/wallet.json
 EOL
-chmod u+x /home/$USER_NAME/launch_steem_wallet.sh
+chmod +x /home/$USER_NAME/launch_steem_wallet.sh
 
 #################################################################
 # Steemd is now actively mining the desired name using the      #
