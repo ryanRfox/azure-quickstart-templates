@@ -13,21 +13,17 @@ DESIRED_NAME=$3
 # Verify desired name availability                              #
 #################################################################
 curl -o /home/$USER_NAME/exists.json https://steemd.com/api/account/exists?name=$DESIRED_NAME
-sleep 2
-cat >/home/$USER_NAME/available1.var <<EOL
-EOL
-sleep 2
-
 if grep -q '"available":false' /home/$USER_NAME/exists.json; then
-cat >/home/$USER_NAME/available2.var <<EOL
+cat >/home/$USER_NAME/error.log <<EOL
+Unfortunately your desired name "$DESIRED_NAME" is already in use
+on the Steem blockchain. Please check name availability here:
+https://steemd.com/api/accounts/exists
+
+Please Deploy to Azure with an available name to get started on Steem.
 EOL
 exit 1
 
 else
-cat >/home/$USER_NAME/available3.var <<EOL
-EOL
-
-fi
 
 #################################################################
 # Update Ubuntu and install prerequisites for building Steem    #
@@ -171,3 +167,4 @@ chmod +x /home/$USER_NAME/launch_steem_wallet.sh
 #                                                               #
 #################################################################
 
+fi
