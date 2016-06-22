@@ -16,6 +16,7 @@ wget http://stedolan.github.io/jq/download/linux64/jq
 chmod +x ./jq
 mv jq /usr/bin
 curl -o /home/$USER_NAME/exists.json https://steemd.com/api/account/exists?name=$DESIRED_NAME
+sleep 2
 AVAILABLE=$(cat exists.json | jq .'available')
 
 if [ $AVAILABLE = 'false' ]; then
