@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# print commands and arguments as they are executed
 set -x
-
-#echo "starting ubuntu devbox install on pid $$"
 date
 ps axjf
 
@@ -13,15 +10,24 @@ USER_NAME=$2
 DESIRED_NAME=$3
 
 #################################################################
-# Update Ubuntu and install prerequisites for launching Steemd  #
+# Verify name availability                                      #
+#################################################################
+wget http://stedolan.github.io/jq/download/linux64/jq
+chmod +x ./jq
+mv jq /usr/bin
+curl -o /home/$USER_NAME/exists.json https://steemd.com/api/account/exists?name=$DESIRED_NAME
+AVAILABLE=$(cat exists.json | jq .'available')
+if [ $AVAILABLE = 'false' ]; then
+  exit 1
+fi
+
+#################################################################
+# Update Ubuntu and install prerequisites for building Steem    #
 #################################################################
 time apt-get -y update
 time apt-get -y install ntp git cmake g++ libbz2-dev libdb++-dev
 time apt-get -y install libdb-dev libssl-dev openssl libreadline-dev autoconf
 time apt-get -y install libtool libboost-all-dev ncurses-dev doxygen
-wget http://stedolan.github.io/jq/download/linux64/jq
-chmod +x ./jq
-mv jq /usr/bin
 
 #################################################################
 # Build Steemd and CLI Wallet from source                       #
