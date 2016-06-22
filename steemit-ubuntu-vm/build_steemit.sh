@@ -10,7 +10,7 @@ USER_NAME=$2
 DESIRED_NAME=$3
 
 #################################################################
-# Verify name availability                                      #
+# Verify desired name availability                              #
 #################################################################
 wget http://stedolan.github.io/jq/download/linux64/jq
 chmod +x ./jq
@@ -18,7 +18,7 @@ mv jq /usr/bin
 curl -o /home/$USER_NAME/exists.json https://steemd.com/api/account/exists?name=$DESIRED_NAME
 AVAILABLE=$(cat exists.json | jq .'available')
 
-if $1 = ''; then
+if $AVAILABLE = 'false'; then
 cat >/home/$USER_NAME/available.var <<EOL
 This is THEN 
 $AVAILABLE
