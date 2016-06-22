@@ -32,9 +32,6 @@ time apt-get -y update
 time apt-get -y install ntp git cmake g++ libbz2-dev libdb++-dev
 time apt-get -y install libdb-dev libssl-dev openssl libreadline-dev autoconf
 time apt-get -y install libtool libboost-all-dev ncurses-dev doxygen
-wget http://stedolan.github.io/jq/download/linux64/jq
-chmod +x ./jq
-mv jq /usr/bin
 
 #################################################################
 # Build Steemd and CLI Wallet from source                       #
@@ -101,8 +98,8 @@ sleep 10
 # Write the file to /home/$USER_NAME/brain_key.json             #
 #################################################################
 curl -o /home/$USER_NAME/brain_key.json --data '{"jsonrpc": "2.0", "method": "call", "params": [0,"suggest_brain_key",[]], "id": 2}' http://127.0.0.1:8092/rpc
-WIF_PRIV_KEY=$( cat /home/$USER_NAME/brain_key.json | jq '.result.wif_priv_key' )
-
+WIF_PRIV_KEY=$( grep -oP 'wif_priv_key":"\K[^"]+' /home/$USER_NAME/brain_key.json  )
+  
 service cli_wallet stop
 service steem stop
 
@@ -128,7 +125,7 @@ ExecStartPre=/bin/mkdir -p /home/$USER_NAME/steem/witness_node
 ExecStart=/usr/bin/steemd \
 -d /home/$USER_NAME/steem/witness_node
 --witness='"$DESIRED_NAME"' \
---miner='["$DESIRED_NAME",$WIF_PRIV_KEY]' \
+--miner='["$DESIRED_NAME","$WIF_PRIV_KEY"]' \
 --mining-threads=$NPROC \
 --rpc-endpoint=127.0.0.1:8090 \
 -s 212.117.213.186:2016 \
