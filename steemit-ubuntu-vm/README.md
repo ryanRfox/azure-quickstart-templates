@@ -1,6 +1,6 @@
 # Steem on Ubuntu 16.04 LTS VM
 
-This template mines your desired name into the Steem __blogchain__. With your name successfully registered, you may begin posting messages and comments thru the included command line interface, or use your credentials at the [Steemit web site](https://steemit.com). Steem is just a click away:
+This template mines your desired name into the Steem _blogchain_. With your name successfully registered, you may begin posting messages and comments thru the included command line interface, or use your credentials at the [Steemit web site](https://steemit.com). Steem is just a click away:
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FryanRfox%2Fazure-quickstart-templates%2Fissue2%2Fsteemit-ubuntu-vm%2Fazuredeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FryanRfox%2Fazure-quickstart-templates%2Fissue2%2Fsteemit-ubuntu-vm%2Fazuredeploy.json" target="_blank"><img src="http://armviz.io/visualizebutton.png"/></a>
@@ -38,22 +38,28 @@ When you click the *Deploy to Azure* icon above, you need to specify the followi
 1. Complete the template parameters, choose your resource group, accept the terms and click Create
 1. Wait about 15 minutes for the VM to spin up and install the bits
 1. Connect to the VM via SSH using the DNS name assigned to your Public IP
-1. Launch the cli-wallet: `sudo ~/launch_steem_wallet.sh`
+1. Review the install log file for status update `$ tail ~/status.log`
+1. Obtain your credentials
+  1. View the brain_key.json file `$ tail ~/brain_key.json`
+  2. Copy the WIF private key for use in a future step
+  3. Save the contents of this file in a secure location
+1. Launch the cli-wallet: `$ sudo ~/launch_steem_wallet.sh`
 1. Assign a secure password `> set_password use_a_secure_password_here` (note: displayed on screen)
-1. Unlock the wallet `> unlock my_secure_password_from_above` the prompt will change to `unlocked >>>`
-1. Check the sync status of the blockchain `> info` 
-  1. Within the results, note the values for `"time"` and `"head_block_age"`
+1. Unlock the wallet `>>> unlock my_secure_password_from_above` the prompt will change to `unlocked >>>`
+1. Check the sync status of the blockchain `unlocked >>> info` 
+  1. Within the results, note the values for _"time"_ and _"head_block_age"_
   1. While syncing these values will be the time of the synced block and how old that block is. Be patient
   1. Syncing is complete when these values are just a few seconds old
 1. Wait for your desired name to be mined on the blockchain
-1. Check the status of your desired name within the Steem blockchain `> get_account my_desired_name` where __my_desired_name__ is the name you supplied for `desiredName` in the template.
-  1. The response including `!accounts.empty(): Unknown account` indicates the name is not yet mined on the blockchain
-  1. A successful response will include your desired `"name"` field and the public key representing it
-1. Import your account to the wallet
+1. Check the status of your desired name within the Steem blockchain `unlocked >>> get_account my_desired_name` where _my_desired_name_ is the name you supplied for `desiredName` in the Azure template
+  1. A response including `!accounts.empty(): Unknown account` indicates your name is not yet mined on the blockchain. Continue waiting.
+  1. A successful response will include your desired name in the `"name"` with all other account details
+1. Import your private key into your wallet
   1. Ensure the wallet is unlocked
-  1. Use the private key from your ~/brain_key.json file `unlocked >>> import_key 5yourPrivateKeyStartsWith5...`
+  1. Use the WIF private key you copied earlier from the ~/brain_key.json file `unlocked >>> import_key 5yourPrivateKeyStartsWith5...`
 1. Exit to save the wallet using `ctrl-d` 
-1. View your wallet: `nano ~/steem/cli_wallet/wallet.json`
+1. View your wallet file: `tail ~/steem/cli_wallet/wallet.json`
+2. Save your wallet file in a secure location as a backup.
 
 # Documentation
 
