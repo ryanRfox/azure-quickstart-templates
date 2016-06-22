@@ -18,7 +18,7 @@ mv jq /usr/bin
 curl -o /home/$USER_NAME/exists.json https://steemd.com/api/account/exists?name=$DESIRED_NAME
 AVAILABLE=$(cat exists.json | jq .'available')
 
-if $AVAILABLE = 'false'; then
+if [ $AVAILABLE = 'false' ]; then
 cat >/home/$USER_NAME/available.var <<EOL
 This is THEN 
 $AVAILABLE
