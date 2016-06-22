@@ -18,18 +18,20 @@ mv jq /usr/bin
 curl -o /home/$USER_NAME/exists.json https://steemd.com/api/account/exists?name=$DESIRED_NAME
 sleep 2
 AVAILABLE=$(cat exists.json | jq .'available')
+sleep 2
+cat >/home/$USER_NAME/available1.var <<EOL
+>$AVAILABLE<
+EOL
 
 if [ $AVAILABLE = 'false' ]; then
-cat >/home/$USER_NAME/available.var <<EOL
-This is THEN 
-$AVAILABLE
+cat >/home/$USER_NAME/available2.var <<EOL
+>$AVAILABLE<
 EOL
 exit 1
 
 else
-cat >/home/$USER_NAME/available.var <<EOL
-This is ELSE
-$AVAILABLE
+cat >/home/$USER_NAME/available3.var <<EOL
+>$AVAILABLE<
 EOL
 fi
 
