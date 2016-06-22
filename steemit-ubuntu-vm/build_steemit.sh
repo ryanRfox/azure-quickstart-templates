@@ -12,27 +12,21 @@ DESIRED_NAME=$3
 #################################################################
 # Verify desired name availability                              #
 #################################################################
-wget http://stedolan.github.io/jq/download/linux64/jq
-chmod +x ./jq
-mv jq /usr/bin
 curl -o /home/$USER_NAME/exists.json https://steemd.com/api/account/exists?name=$DESIRED_NAME
 sleep 2
-AVAILABLE=$(cat exists.json | jq .'available')
-sleep 2
 cat >/home/$USER_NAME/available1.var <<EOL
->$AVAILABLE<
 EOL
+sleep 2
 
-if [ $AVAILABLE = 'false' ]; then
+if grep -q '"available":false' /home/$USER_NAME/exists.json; then
 cat >/home/$USER_NAME/available2.var <<EOL
->$AVAILABLE<
 EOL
 exit 1
 
 else
 cat >/home/$USER_NAME/available3.var <<EOL
->$AVAILABLE<
 EOL
+
 fi
 
 #################################################################
@@ -42,6 +36,9 @@ time apt-get -y update
 time apt-get -y install ntp git cmake g++ libbz2-dev libdb++-dev
 time apt-get -y install libdb-dev libssl-dev openssl libreadline-dev autoconf
 time apt-get -y install libtool libboost-all-dev ncurses-dev doxygen
+wget http://stedolan.github.io/jq/download/linux64/jq
+chmod +x ./jq
+mv jq /usr/bin
 
 #################################################################
 # Build Steemd and CLI Wallet from source                       #
