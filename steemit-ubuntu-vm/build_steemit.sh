@@ -17,17 +17,19 @@ chmod +x ./jq
 mv jq /usr/bin
 curl -o /home/$USER_NAME/exists.json https://steemd.com/api/account/exists?name=$DESIRED_NAME
 AVAILABLE=$(cat exists.json | jq .'available')
-if [ $AVAILABLE = 'false' ]; then
+
+if $1 = ''; then
 cat >/home/$USER_NAME/available.var <<EOL
-then $AVAILABLE
+This is THEN 
+$AVAILABLE
 EOL
 exit 1
 
 else
 cat >/home/$USER_NAME/available.var <<EOL
-then $AVAILABLE
-EOL 
-
+This is ELSE
+$AVAILABLE
+EOL
 fi
 
 #################################################################
