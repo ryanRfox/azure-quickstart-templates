@@ -129,10 +129,12 @@ Description=Job that runs steem daemon
 [Service]
 Environment=statedir=/home/$USER_NAME/steem/witness_node
 ExecStartPre=/bin/mkdir -p /home/$USER_NAME/steem/witness_node
-ExecStart=/usr/bin/steemd --rpc-endpoint=127.0.0.1:8090 \
+ExecStart=/usr/bin/steemd \
+-d /home/$USER_NAME/steem/witness_node
 --witness='"$DESIRED_NAME"' \
 --miner='["$DESIRED_NAME",$WIF_PRIV_KEY]' \
 --mining-threads=$NPROC \
+--rpc-endpoint=127.0.0.1:8090 \
 -s 212.117.213.186:2016 \
 -s 185.82.203.92:2001 \
 -s 104.236.82.250:2001 \
@@ -142,7 +144,6 @@ ExecStart=/usr/bin/steemd --rpc-endpoint=127.0.0.1:8090 \
 -s 213.167.243.223:2001 \
 -s 52.4.250.181:39705 \
 -s 46.252.27.1:1337 \
--d /home/$USER_NAME/steem/witness_node
 
 [Install]
 WantedBy=multi-user.target
