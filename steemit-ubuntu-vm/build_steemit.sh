@@ -123,7 +123,7 @@ Description=Job that runs steem daemon
 Environment=statedir=/home/$USER_NAME/steem/witness_node
 ExecStartPre=/bin/mkdir -p /home/$USER_NAME/steem/witness_node
 ExecStart=/usr/bin/steemd \
--d /home/$USER_NAME/steem/witness_node
+-d /home/$USER_NAME/steem/witness_node \
 --witness='"$DESIRED_NAME"' \
 --miner='["$DESIRED_NAME","$WIF_PRIV_KEY"]' \
 --mining-threads=$NPROC \
