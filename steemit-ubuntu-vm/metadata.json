@@ -1,7 +1,7 @@
 { 
-  "itemDisplayName": "Steemit Witness Node on Ubuntu 16.04 LTS", 
-  "description": "Deploy a node on the Steemit blockchain in just a few clicks. Join the discussion at https://steemit.com", 
-  "summary": "Create Ubuntu VM with Steemit Witness.", 
+  "itemDisplayName": "Steem Node on Ubuntu 16.04 LTS", 
+  "description": "Mine your name into the Steem blockchain in just a few clicks. Join the discussion at https://steemit.com", 
+  "summary": "Create Ubuntu VM with Steem Witness + CLI Wallet.", 
   "githubUsername": "ryanRfox", 
-  "dateUpdated": "2016-05-09" 
+  "dateUpdated": "2016-06-23" 
 }
