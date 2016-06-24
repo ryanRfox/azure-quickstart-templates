@@ -40,9 +40,7 @@
       "type": "string",
       "defaultValue": "Standard_A2",
       "allowedValues": [
-        "Standard_A1",
         "Standard_A2",
-        "Standard_A4",
         "Standard_D1_V2",
         "Standard_D2_V2",
         "Standard_D4_V2",
