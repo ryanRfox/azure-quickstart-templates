@@ -95,23 +95,44 @@ service cli_wallet start
 sleep 10
 
 #################################################################
-# Generate the private key for mining on this virtual machine   #
-# using "suggest_brain_key" function from the local cli_wallet. #
-# Write the file to /home/$USER_NAME/brain_key.json             #
+# Generate four (4) private keys using using the                #
+# "suggest_brain_key" function locally within the cli_wallet.   #
+# The OWNER_PRIV_KEY will be used for mining the desired name.  #
+# Best practice security procedures require settinging the      #
+# Active, Posting and Memo keys different from the Owner key.   #
+# These changes must take place after the account is mined.     #
 #################################################################
-curl -o /home/$USER_NAME/brain_key.json --data '{"jsonrpc": "2.0", "method": "call", "params": [0,"suggest_brain_key",[]], "id": 2}' http://127.0.0.1:8092/rpc
-WIF_PRIV_KEY=$( grep -oP 'wif_priv_key":"\K[^"]+' /home/$USER_NAME/brain_key.json  )
-  
+curl -o /home/$USER_NAME/owner_key.json --data '{"jsonrpc": "2.0", "method": "call", "params": [0,"suggest_brain_key",[]], "id": 2}' http://127.0.0.1:8092/rpc
+OWNER_PRIV_KEY=$( grep -oP 'wif_priv_key":"\K[^"]+' /home/$USER_NAME/owner_key.json  )
+curl -o /home/$USER_NAME/active_key.json --data '{"jsonrpc": "2.0", "method": "call", "params": [0,"suggest_brain_key",[]], "id": 2}' http://127.0.0.1:8092/rpc
+ACTIVE_PRIV_KEY=$( grep -oP 'wif_priv_key":"\K[^"]+' /home/$USER_NAME/active_key.json  )
+curl -o /home/$USER_NAME/posting_key.json --data '{"jsonrpc": "2.0", "method": "call", "params": [0,"suggest_brain_key",[]], "id": 2}' http://127.0.0.1:8092/rpc
+POSTING_PRIV_KEY=$( grep -oP 'wif_priv_key":"\K[^"]+' /home/$USER_NAME/posting_key.json  )
+curl -o /home/$USER_NAME/memo_key.json --data '{"jsonrpc": "2.0", "method": "call", "params": [0,"suggest_brain_key",[]], "id": 2}' http://127.0.0.1:8092/rpc
+MEMO_PRIV_KEY=$( grep -oP 'wif_priv_key":"\K[^"]+' /home/$USER_NAME/memo_key.json  )
+
 service cli_wallet stop
 service steem stop
+
+#################################################################
+# Create a bash file to change the Active, Posting and Memo     #
+# private keys. The user can execute the script once the name   #
+# exists on the blockchain.                                     #
+#################################################################
+cat >/home/$USER_NAME/update_keys.sh <<EOL
+service cli_wallet start
+curl --data '{"jsonrpc": "2.0", "method": "call", "params": [0,"update_account",["$DESIRED_NAME,$ACTIVE_PRIV_KEY,$POSTING_PRIV_KEY,$MEMO_PRIV_KEY"]], "id": 2}' http://127.0.0.1:8092/rpc
+service cli_wallet stop
+EOL
+chmod +x /home/$USER_NAME/update_keys.sh
 
 #################################################################
 # (OPTIONAL) Send the private keys by email iff the user made   #
 # the request in the Azure template.                            #
 #################################################################
 # TODO: install mail relay
-# TODO: encrypt brain_key.json using a passed value
-# TODO: send email containing encrypted brain_key.json with instructions. Remind unencrypted file remains on VM.
+# TODO: encrypt *_key.json files using a passed value
+# TODO: send email containing encrypted *_key.json files with instructions. Remind unencrypted file remains on VM.
 # TODO: uninstall mail relay
 
 #################################################################
@@ -127,7 +148,7 @@ ExecStartPre=/bin/mkdir -p /home/$USER_NAME/steem/witness_node
 ExecStart=/usr/bin/steemd \
 -d /home/$USER_NAME/steem/witness_node \
 --witness='"$DESIRED_NAME"' \
---miner='["$DESIRED_NAME","$WIF_PRIV_KEY"]' \
+--miner='["$DESIRED_NAME","$OWNER_PRIV_KEY"]' \
 --mining-threads=$NPROC \
 --rpc-endpoint=127.0.0.1:8090 \
 -s 212.117.213.186:2016 \
