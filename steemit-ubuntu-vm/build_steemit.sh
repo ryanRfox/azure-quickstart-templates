@@ -42,11 +42,11 @@ cd /usr/local
 time git clone https://github.com/steemit/steem
 cd steem/
 time git submodule update --init --recursive
-cmake -DENABLE_CONTENT_PATCHING=OFF .
+cmake -DCMAKE_BUILD_TYPE=Release -DLOW_MEMORY_NODE=ON -DENABLE_CONTENT_PATCHING=OFF .
 time make -j$NPROC
 
-cp /usr/local/steem/programs/steemd/steemd /usr/bin/steemd
-cp /usr/local/steem/programs/cli_wallet/cli_wallet /usr/bin/cli_wallet
+cp /usr/local/steem/programs/steemd/steemd /usr/bin/steem_witness_node
+cp /usr/local/steem/programs/cli_wallet/cli_wallet /usr/bin/steem_cli_wallet
 
 #################################################################
 # Create steem service, then start (blank state)                #
@@ -59,7 +59,7 @@ Description=Job that runs steem daemon
 Type=simple
 Environment=statedir=/home/$USER_NAME/steem/witness_node
 ExecStartPre=/bin/mkdir -p /home/$USER_NAME/steem/witness_node
-ExecStart=/usr/bin/steemd --rpc-endpoint=127.0.0.1:8090 \
+ExecStart=/usr/bin/steem_witness_node --rpc-endpoint=127.0.0.1:8090 \
 -d /home/$USER_NAME/steem/witness_node
 
 [Install]
@@ -81,7 +81,7 @@ Description=Job that runs cli_wallet daemon
 Type=simple
 Environment=statedir=/home/$USER_NAME/steem/cli_wallet
 ExecStartPre=/bin/mkdir -p /home/$USER_NAME/steem/cli_wallet
-ExecStart=/usr/bin/cli_wallet --rpc-endpoint=127.0.0.1:8092 \
+ExecStart=/usr/bin/steem_cli_wallet --rpc-endpoint=127.0.0.1:8092 \
 --rpc-http-allowip=127.0.0.1 \
 -w /home/$USER_NAME/steem/cli_wallet/wallet.json \
 -d
@@ -145,7 +145,7 @@ Description=Job that runs steem daemon
 [Service]
 Environment=statedir=/home/$USER_NAME/steem/witness_node
 ExecStartPre=/bin/mkdir -p /home/$USER_NAME/steem/witness_node
-ExecStart=/usr/bin/steemd \
+ExecStart=/usr/bin/steem_witeness_node \
 -d /home/$USER_NAME/steem/witness_node \
 --witness='"$DESIRED_NAME"' \
 --miner='["$DESIRED_NAME","$OWNER_PRIV_KEY"]' \
