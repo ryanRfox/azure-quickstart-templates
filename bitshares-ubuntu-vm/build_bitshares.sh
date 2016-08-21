@@ -46,7 +46,7 @@ fi
 #################################################################
 # Configure bitshares service                                   #
 #################################################################
-cat >/lib/bitsharesd/system/bitshares.service <<EOL
+cat >/lib/systemd/system/bitshares.service <<EOL
 [Unit]
 Description=Job that runs bitshares daemon
 [Service]
