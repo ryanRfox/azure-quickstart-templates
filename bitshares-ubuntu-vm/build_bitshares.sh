@@ -38,8 +38,8 @@ time git submodule update --init --recursive
 time cmake -DCMAKE_BUILD_TYPE=Release .
 time make -j$NPROC
 
-cp /usr/local/bitshares-2/programs/witness_node/witness_node /usr/bin/witness_node
-cp /usr/local/bitshares-2/programs/cli_wallet/cli_wallet /usr/bin/cli_wallet
+cp /usr/local/bitshares-2/programs/witness_node/witness_node /usr/bin/bitshares_witness_node
+cp /usr/local/bitshares-2/programs/cli_wallet/cli_wallet /usr/bin/bitshares_cli_wallet
 
 fi
 
@@ -53,7 +53,7 @@ Description=Job that runs bitshares daemon
 Type=simple
 Environment=statedir=/home/$USER_NAME/bitshares/witness_node
 ExecStartPre=/bin/mkdir -p /home/$USER_NAME/bitshares/witness_node
-ExecStart=/usr/bin/bitsharesd --rpc-endpoint=127.0.0.1:8090 \
+ExecStart=/usr/bin/bitshares_witness_node --rpc-endpoint=127.0.0.1:8090 \
 -d /home/$USER_NAME/bitshares/witness_node
 [Install]
 WantedBy=multi-user.target
