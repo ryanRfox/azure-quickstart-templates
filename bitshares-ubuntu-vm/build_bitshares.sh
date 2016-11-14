@@ -53,8 +53,7 @@ Description=Job that runs bitshares daemon
 Type=simple
 Environment=statedir=/home/$USER_NAME/bitshares/witness_node
 ExecStartPre=/bin/mkdir -p /home/$USER_NAME/bitshares/witness_node
-ExecStart=/usr/bin/bitshares_witness_node --rpc-endpoint=127.0.0.1:8090 \
--d /home/$USER_NAME/bitshares/witness_node
+ExecStart=/usr/bin/bitshares_witness_node --rpc-endpoint=127.0.0.1:8090 -d /home/$USER_NAME/bitshares/witness_node
 [Install]
 WantedBy=multi-user.target
 EOL
