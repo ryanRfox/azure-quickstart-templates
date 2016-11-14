@@ -29,7 +29,7 @@ else
 #################################################################
 # Build BitShares from source                                   #
 #################################################################
-time apt-get -y install git cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
+time apt-get -y install g++ git cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
 
 cd /usr/local
 time git clone https://github.com/bitshares/bitshares-2.git
