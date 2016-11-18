@@ -3,34 +3,21 @@
 # print commands and arguments as they are executed
 set -x
 
-#echo "starting ubuntu devbox install on pid $$"
 date
 ps axjf
 
 NPROC=$(nproc)
-INSTALL_METHOD=$1
-USER_NAME=$2
+USER_NAME=$1
 
 #################################################################
 # Update Ubuntu and install prerequisites for running BitShares #
 #################################################################
 time apt-get -y update
-time apt-get install -y ntp
+time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
 
-if [ $INSTALL_METHOD = 'From_PPA' ]; then
-#################################################################
-# Install BitShares from PPA                                    #
-#################################################################
-time add-apt-repository -y ppa:bitshares/bitshares
-time apt-get -y update
-time apt-get install -y bitshares2-cli
-
-else    
 #################################################################
 # Build BitShares from source                                   #
 #################################################################
-time apt-get -y install g++ git cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
-
 cd /usr/local
 time git clone https://github.com/bitshares/bitshares-2.git
 cd bitshares-2/
@@ -40,8 +27,6 @@ time make -j$NPROC
 
 cp /usr/local/bitshares-2/programs/witness_node/witness_node /usr/bin/bitshares_witness_node
 cp /usr/local/bitshares-2/programs/cli_wallet/cli_wallet /usr/bin/bitshares_cli_wallet
-
-fi
 
 #################################################################
 # Configure bitshares service                                   #
