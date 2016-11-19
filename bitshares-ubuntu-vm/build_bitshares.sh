@@ -1,4 +1,5 @@
-#!/bin/bash
+
+wai#!/bin/bash
 
 # print commands and arguments as they are executed
 set -x
@@ -43,7 +44,14 @@ ExecStart=/usr/bin/bitshares_witness_node --rpc-endpoint=127.0.0.1:8090 -d /home
 WantedBy=multi-user.target
 EOL
 
+##################################################################################################
+# Start the Bitshares service to allow it to create the default configuration file. Stop the     #
+# service, modify the config.ini file, then restart the service with the new settings applied.   #
+##################################################################################################
 systemctl daemon-reload
+service bitshares start
+wait 30
+sed -i 's/level=debug/level=info/g' /home/$USER_NAME/bitshares/witness_node/config.ini
 service bitshares start
 
 ##################################################################################################
