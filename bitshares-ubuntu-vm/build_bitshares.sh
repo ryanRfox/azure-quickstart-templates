@@ -30,8 +30,8 @@ time git submodule update --init --recursive
 time cmake -DCMAKE_BUILD_TYPE=Release .
 time make -j$NPROC
 
-cp /usr/local/bitshares-2/programs/witness_node/witness_node /usr/bin/testnet_witness_node
-cp /usr/local/bitshares-2/programs/cli_wallet/cli_wallet /usr/bin/testnet_cli_wallet
+cp /usr/local/graphene-testnet/programs/witness_node/witness_node /usr/bin/testnet_witness_node
+cp /usr/local/graphene-testnet/programs/cli_wallet/cli_wallet /usr/bin/testnet_cli_wallet
 
 ##################################################################################################
 # Configure bitshares service. Enable it to start on boot.                                       #
@@ -62,11 +62,11 @@ service testnet stop
 wait 10
 service testnet start
 
-##################################################################################################
-# Connect to host via SSH, then start cli wallet:                                                #
-# $sudo /usr/bin/cli_wallet --wallet-file=/usr/local/testnet/programs/cli-wallet/wallet.json     #
-# >set_password use_a_secure_password_but_check_your_shoulder_as_it_will_be_displayed_on_screen  #
-# >ctrl-d [will save the wallet and exit the client]                                             #
-# $nano /usr/local/testnet/programs/cli-wallet/wallet.json                                       #
-# Learn more: http://docs.bitshares.eu                                                           #
-##################################################################################################
+########################################################################################################
+# Connect to host via SSH, then start cli wallet:                                                      #
+# $sudo /usr/bin/testnet_cli_wallet --wallet-file=/usr/local/testnet/programs/cli-wallet/wallet.json   #
+# >set_password use_a_secure_password_but_check_your_shoulder_as_it_will_be_displayed_on_screen        #
+# >ctrl-d [will save the wallet and exit the client]                                                   #
+# $nano /usr/local/testnet/programs/cli-wallet/wallet.json                                             #
+# Learn more: http://docs.bitshares.eu                                                                 #
+########################################################################################################
