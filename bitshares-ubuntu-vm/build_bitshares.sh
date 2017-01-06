@@ -20,12 +20,8 @@ time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev 
 # Build BitShares from source                                                                    #
 ##################################################################################################
 cd /usr/local
-time git clone https://github.com/cryptonomex/graphene.git
-mv graphene/ graphene-testnet/
-cd graphene-testnet/
-git branch testnet
-git remote set-url origin https://github.com/BitSharesEurope/graphene-testnet
-git push origin testnet
+time git clone https://github.com/BitSharesEurope/graphene-testnet.git
+cd graphene-testnet
 time git submodule update --init --recursive
 time cmake -DCMAKE_BUILD_TYPE=Release .
 time make -j$NPROC
