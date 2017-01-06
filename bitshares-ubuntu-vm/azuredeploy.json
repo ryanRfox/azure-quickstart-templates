@@ -218,7 +218,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/issue1/bitshares-ubuntu-vm/build_bitshares.sh"
+            "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/testnet/bitshares-ubuntu-vm/build_bitshares.sh"
           ],
           "commandToExecute": "[concat('sh build_bitshares.sh ', parameters('adminUsername'))]" 
         }
