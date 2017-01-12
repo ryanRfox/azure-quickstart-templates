@@ -52,10 +52,10 @@ systemctl enable bitshares
 # service, modify the config.ini file, then restart the service with the new settings applied.   #
 ##################################################################################################
 service bitshares start
-wait 10
+wait 5
 sed -i 's/level=debug/level=info/g' /home/$USER_NAME/bitshares/witness_node/config.ini
 service bitshares stop
-wait 10
+wait 5
 service bitshares start
 
 ##################################################################################################
