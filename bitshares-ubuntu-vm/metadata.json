@@ -1,7 +1,7 @@
 { 
-  "itemDisplayName": "BitShares Witness Node and GUI Wallet on Ubuntu 15.10", 
+  "itemDisplayName": "TESTNET BitShares Witness Node and GUI Wallet on Ubuntu 16.04 LTS", 
   "description": "Deploy a node on the fastest public blockchain in just a few clicks, then load the graphical wallet within your web browser. The BitShares network delivers on the promise of blockchain technology including: 3 second block time, price stable currencies, named accounts, dynamic account permission, decentralized asset exchange, stealth transactions and much more. Documentation is available at docs.bitshares.eu and community support is available at bitsharestalk.org", 
   "summary": "Create Ubuntu VM with BitShares Witness Node and GUI wallet.", 
   "githubUsername": "ryanRfox", 
-  "dateUpdated": "2016-03-18" 
+  "dateUpdated": "2017-01-16" 
 }

@@ -20,27 +20,13 @@
           "description": "Hostname assigned to the Public IP, also used as the VM Name. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
        }
     },
-    "installMethod": {
-      "type": "string",
-      "defaultValue": "From_PPA",
-      "allowedValues": [
-        "From_PPA",
-        "From_Source"
-      ],
-      "metadata": {
-        "description": "Method to install bits. From_PPA: unofficial community bianaries.  From_Source: official BitShares repo on GitHub."
-      }
-    },    
     "vmSize": {
       "type": "string",
-      "defaultValue": "Standard_A2",
+      "defaultValue": "Standard_DS2_V2",
       "allowedValues": [
-        "Standard_A1",
-        "Standard_A2",
-        "Standard_A3",
-        "Standard_D1_V2",
-        "Standard_D2_V2",
-        "Standard_D3_V2"
+        "Standard_DS2_V2",
+        "Standard_DS3_V2",
+        "Standard_DS4_V2"
       ],
       "metadata": {
         "description": "Size of VM"
@@ -50,8 +36,8 @@
   "variables": {
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
+    "imageSKU": "16.04.0-LTS",
     "OSDiskName": "BitSharesOSDisk",
-    "imageSKU": "15.10",
     "nicName": "BitSharesNic",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "BitSharesSubnet",
@@ -234,7 +220,7 @@
           "fileUris": [
             "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/dev/bitshares-ubuntu-vm/build_bitshares-ui.sh"
           ],
-          "commandToExecute": "[concat('sh build_bitshares-ui.sh ', parameters('installMethod'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn)]" 
+          "commandToExecute": "[concat('sh build_bitshares-ui.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn)]" 
         }
       }
     }
