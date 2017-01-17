@@ -85,6 +85,34 @@
               "priority": 200,
               "direction": "Inbound"
             }
+          },
+          {
+            "name": "BitShares-Web-Wallet",
+            "properties": {
+              "description": "NodeJS site hosting the BitShares web wallet",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 210,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "SSH",
+            "properties": {
+              "description": "SSH Access",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 220,
+              "direction": "Inbound"
+            }
           }
         ]
       }
