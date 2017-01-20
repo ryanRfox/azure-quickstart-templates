@@ -8,12 +8,12 @@ ps axjf
 USER_NAME=$1
 FQDN=$2
 NPROC=$(nproc)
-ip=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
+IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 
 echo "USER_NAME: $USER_NAME"
 echo "FQDN: $FQDN"
 echo "nproc: $NPROC"
-echo "eth0: $ip"
+echo "eth0: $IP"
 
 ##############################################################################################
 # Update Ubuntu and install the prerequisites for running TESTNET BitShares witness node,    #
