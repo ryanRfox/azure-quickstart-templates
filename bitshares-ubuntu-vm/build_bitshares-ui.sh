@@ -27,6 +27,8 @@ echo "PROJECT: $PROJECT"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
 
+apt update && apt upgrade -y && apt autoremove -y
+
 ##############################################################################################
 # Clone the Graphene project from the Cryptonomex source repository.                         #
 ##############################################################################################
@@ -43,17 +45,16 @@ pip3 install pip --upgrade
 cd /usr/local/src
 time git clone https://github.com/xeroc/python-graphenelib.git
 cd python-graphenelib
-#pip3 install autobahn pycrypto python-requests # graphenelib 
+pip3 install autobahn pycrypto # python-requests # graphenelib 
 python3 setup.py install --user
 
 ##################################################################################################
-# Download a TESTNET pre-compiled cli_wallet to generate new key pairs. Download a default       #
-# genesis file to modify.                                                                        #
+# Download a TESTNET pre-compiled cli_wallet to generate new key pairs. Make the file executable.#
 ##################################################################################################
 mkdir /home/$USER_NAME/key_gen/
 cd /home/$USER_NAME/key_gen/
 time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/testnet_cli_wallet
-time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/my-genesis.json
+chmod +x testnet_cli_wallet
 
 ##################################################################################################
 # Create a python script to modify a default genesis file with our custom values.                #
@@ -87,6 +88,10 @@ def startCliWallet(screen_name,cli_wallet_path,witness_url,wallet_host,wallet_js
     print("Starting CLI_Wallet...")
     subprocess.call(["screen","-dmS",screen_name,cli_wallet_path,"-s",witness_url,"-H",wallet_host,"-w",wallet_json_file])
 
+def stopCliWallet(screen_name):
+    print("Closing CLI_Wallet...")
+    subprocess.call(["screen","-S",screen_name,"-p","0","-X","quit"])
+
 def createAccountWithBrainKey(newAccount):
     myBrainKeyJson     = graphene.rpc.suggest_brain_key()
     myBrainKey         = myBrainKeyJson["brain_priv_key"]
@@ -98,17 +103,26 @@ def createAccountWithBrainKey(newAccount):
     print(tx)
 
 def modifyGenesisFile():
+    print("Starting genesis file modifications...")
     i = 0
+    keyfile = open('account.key','w+')
+    keyfile.write("{\n")
+    keyfile.close()
     with open(genesisSourcePath, 'r+') as file:
         json_data = json.load(file, object_pairs_hook=OrderedDict)
-        json_data['initial_timestamp'] = str(datetime.datetime.now() + datetime.timedelta(seconds=300))
+        dt = datetime.datetime.now() + datetime.timedelta(seconds=300)
+        print("    Updating timestamp...")
+        json_data['initial_timestamp'] = dt.isoformat()
         for account in newAccounts:
-            print(account)
+            print("    Adding account and keys for",account,"...")
             brainKeyJson     = graphene.rpc.suggest_brain_key()
-            print(brainKeyJson)
             wifPrivKey       = brainKeyJson["wif_priv_key"]
             pubKey           = brainKeyJson["pub_key"].replace("TEST", "GPH")
-            # TODO: store the priv_key for later use within the wallet(s)
+            with open('account.key', 'a') as keyfile:
+                keyfile.write("\""+account+"\":\n")
+                json.dump(brainKeyJson, keyfile, indent=2)
+                keyfile.write(",\n")
+                keyfile.close()
             json_data['initial_witness_candidates'][i]['owner_name'] = account
             json_data['initial_witness_candidates'][i]['block_signing_key'] = pubKey
             json_data['initial_accounts'][i]['name'] = account
@@ -119,6 +133,11 @@ def modifyGenesisFile():
         file.seek(0)
         file.write(json.dumps(json_data, indent=4))
         file.truncate()
+    print("All genesis file modifications complete.")
+    keyfile = open('account.key','a')
+    keyfile.write("}")
+    keyfile.close()
+
 
 def importAccountKeys(accounts, privateKeys):
     i = 0
@@ -133,6 +152,8 @@ if __name__ == '__main__':
     graphene = GrapheneClient(Config)
     print(graphene.rpc.about())
     modifyGenesisFile()
+    stopCliWallet("testnet_cli_wallet")
+    print("Done.")
 EOL
 
 ##############################################################################################
@@ -146,8 +167,8 @@ cp /home/$USER_NAME/key_gen/my-genesis.json /usr/local/src/$PROJECT/genesis.json
 ##############################################################################################
 # Install all necessary packages for building PRIVATE GRAPHENE witness node and CLI.         #
 ##############################################################################################
-time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev libssl-dev \
-                        openssl libreadline-dev autoconf libtool libboost-all-dev
+time apt -y install ntp g++ make cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl \
+                    libreadline-dev autoconf libtool libboost-all-dev
 
 ##############################################################################################
 # Build the PRIVATE GRAPHENE witness node and CLI wallet.                                    #
@@ -183,20 +204,49 @@ systemctl daemon-reload
 systemctl enable $PROJECT
 
 ##################################################################################################
+# Create a python script to modify the config.ini file with our custom values.                   #
+##################################################################################################
+cat >/home/$USER_NAME/key_gen/modify_config.py <<EOL
+# Call this script with: modify_config.py <config_file> <json_file_containing_accounts_with_brainkeys> 
+from collections import OrderedDict
+import sys
+import json
+
+
+configSourcePath      = sys.argv[1]
+accountsJsonPath      = sys.argv[2]
+
+def modifyConfig(configSourcePath, accountsJsonPath):
+    i = 0
+    with open(configSourcePath, 'a') as configfile:
+        with open(accountsJsonPath, 'r+') as keyfile:
+            json_data = json.load(keyfile, object_pairs_hook=OrderedDict)
+            for account in json_data:
+                configfile.write("witness-id = 1.6.",i)
+                configfile.write("private-key = \["+json_data[i]["pub_key"]+","+json_data[i]["wif_priv_key"]+"\]")
+                i = i + 1
+        keyfile.close()
+    configfile.close()
+
+if __name__ == '__main__':
+    modifyConfig(configSourcePath,accountsJsonPath)
+
+EOL
+
+cd /home/$USER_NAME/key_gen/
+python3 modify_config.py /home/$USER_NAME/graphene/witness_node/config.ini /home/$USER_NAME/key_gen/account.key
+
+##################################################################################################
 # Start the graphene service to allow it to create the default configuration file. Stop the      #
 # service, modify the config.ini file, then restart the service with the new settings applied.   #
 ##################################################################################################
 service $PROJECT start
 wait 10
+service $PROJECT stop
 sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 sed -i 's/# rpc-endpoint =/rpc-endpoint = '$RPC_IP':'$RPC_PORT'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 sed -i 's/enable-stale-production = false/enable-stale-production = true/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
-# replace witness-id = "1.6.0"
-# [...]
-# replace witness-id = "1.6.10"
-# replace private-key = 
-service $PROJECT stop
-wait 10
+python3 
 service $PROJECT start
 
 ##################################################################################################
