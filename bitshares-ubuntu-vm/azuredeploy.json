@@ -32,7 +32,8 @@
       "allowedValues": [
         "Standard_DS2_V2",
         "Standard_DS3_V2",
-        "Standard_DS4_V2"
+        "Standard_DS4_V2",
+        "Standard_H8"
       ],
       "metadata": {
         "description": "Size of VM"
