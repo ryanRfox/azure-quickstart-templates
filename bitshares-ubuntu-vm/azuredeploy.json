@@ -30,6 +30,7 @@
       "type": "string",
       "defaultValue": "Standard_DS2_V2",
       "allowedValues": [
+        "Standard_DS1_V2",
         "Standard_DS2_V2",
         "Standard_DS3_V2",
         "Standard_DS4_V2",

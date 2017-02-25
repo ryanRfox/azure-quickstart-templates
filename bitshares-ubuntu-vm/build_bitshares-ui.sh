@@ -29,13 +29,16 @@ echo "PROJECT: $PROJECT"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
 
-apt update && apt upgrade -y
+apt update 
+apt upgrade -y
 
+echo "Upgrad complete."
 ##############################################################################################
 # Clone the Graphene project from the Cryptonomex source repository. Initialize the project. #
 # Eliminate the test folder to speed up the build time by about 20%. Modify the config.hpp   #
 # file to set the address prefix to our deisired value.                                      # 
 ##############################################################################################
+echo "Clone Graphene project"
 cd /usr/local/src
 time git clone $GITHUB_REPOSITORY
 cd $PROJECT
