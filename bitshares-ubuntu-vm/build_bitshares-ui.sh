@@ -22,13 +22,14 @@ echo "ACCOUNT_NAMES : $ACCOUNT_NAMES"
 echo "FQDN: $FQDN"
 echo "nproc: $NPROC"
 echo "eth0: $LOCAL_IP"
+echo "RPC_PORT: $P2P_PORT"
 echo "RPC_PORT: $RPC_PORT"
 echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
 echo "PROJECT: $PROJECT"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
 
-apt update && apt upgrade -y && apt autoremove -y
+apt update && apt upgrade -y
 
 ##############################################################################################
 # Clone the Graphene project from the Cryptonomex source repository. Initialize the project. #
@@ -39,6 +40,7 @@ cd /usr/local/src
 time git clone $GITHUB_REPOSITORY
 cd $PROJECT
 time git submodule update --init --recursive
+sed -i 's/add_subdirectory( tests )/#add_subdirectory( tests )/g' /usr/local/src/graphene/CMakeLists.txt
 # sed -i 's/define GRAPHENE_ADDRESS_PREFIX "GPH"/define GRAPHENE_ADDRESS_PREFIX "+$ADDRESS_PREFIX+"/g' /usr/local/src/graphene/libraries/chain/include/graphene/chain/config.hpp
 
 ##################################################################################################
@@ -121,7 +123,6 @@ def modifyGenesisFile():
             brainKeyJson     = graphene.rpc.suggest_brain_key()
             wifPrivKey       = brainKeyJson["wif_priv_key"]
             pubKey           = brainKeyJson["pub_key"]
-            #pubKey           = pubKey.replace("TEST", "GPH")
             json_data['initial_witness_candidates'][i]['owner_name'] = account
             json_data['initial_witness_candidates'][i]['block_signing_key'] = pubKey
             json_data['initial_accounts'][i]['name'] = account
@@ -130,7 +131,7 @@ def modifyGenesisFile():
             json_data['initial_committee_candidates'][i]['owner_name'] = account
             account_data['Accounts'].append({
                 'name': account,
-                'keys': brainKeyJson
+                'keys': brainKeyJson 
             })
             i = i + 1
         file.seek(0)
@@ -165,6 +166,7 @@ cd /home/$USER_NAME/key_gen
 time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/my-genesis.json
 python3 modify_genesis.py $ACCOUNT_NAMES /home/$USER_NAME/key_gen/my-genesis.json
 sed -i 's/TEST/GPH/g' /home/$USER_NAME/key_gen/account_keys.json
+sed -i 's/TEST/GPH/g' /home/$USER_NAME/key_gen/my-genesis.json
 cp /home/$USER_NAME/key_gen/my-genesis.json /usr/local/src/$PROJECT/genesis.json
 
 ##############################################################################################
@@ -227,9 +229,9 @@ def modifyConfig(configSourcePath, accountsJsonPath):
         json_data = json.load(keyfile, object_pairs_hook=OrderedDict)
         Accounts = json_data['Accounts']
         for account in Accounts:
-            witnessIdStr = witnessIdStr + "witness-id  = \"1.6."+str(i)+"\"\n"
             i = i + 1
-        while i < 11:
+            witnessIdStr = witnessIdStr + "witness-id  = \"1.6."+str(i)+"\"\n"
+        while i < 12:
             witnessIdStr = witnessIdStr + "witness-id  = \"1.6."+str(i)+"\"\n"
             i = i + 1
         i = 0
@@ -255,7 +257,6 @@ EOL
 # service, modify the config.ini file, then restart the service with the new settings applied.   #
 ##################################################################################################
 service $PROJECT start
-wait 3
 service $PROJECT stop
 cd /home/$USER_NAME/key_gen/
 sed -i 's/# p2p-endpoint =/p2p-endpoint = '$LOCAL_IP':'$P2P_PORT'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
@@ -271,8 +272,8 @@ service $PROJECT start
 time apt install -y apache2 npm
 cd /usr/local/src
 time curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
+source ~/.profile
 nvm install v6
-nvm use v6
 
 ##################################################################################################
 # Clone and install the PRIVATE GRAPHENE web wallet.                                             #
@@ -280,13 +281,14 @@ nvm use v6
 cd /usr/local/src
 time git clone https://github.com/Cryptonomex/graphene-ui.git
 cd graphene-ui/web
+nvm use v6
 npm install
 
 ##################################################################################################
 # Configure PRIVATE GRAPHENE-UI to default to this VM (Replaces OpenLedger)                      #
 ##################################################################################################
-sed -i 's%let apiServer = \[%let apiServer = [\n            {url: "ws://'$FQDN':'$RPC_PORT'/ws", location: "Azure Cloud"},%g' /usr/local/graphene-ui/web/app/stores/SettingsStore.js
-sed -i 's%apiServer: "wss://bitshares.openledger.info/ws"%apiServer: "ws://'$FQDN':'$RPC_PORT'/ws"%g' /usr/local/graphene-ui/web/app/stores/SettingsStore.js
+sed -i 's%let apiServer = \[%let apiServer = [\n            {url: "ws://'$FQDN':'$RPC_PORT'/ws", location: "Azure Cloud"},%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
+sed -i 's%apiServer: "wss://bitshares.openledger.info/ws"%apiServer: "ws://'$FQDN':'$RPC_PORT'/ws"%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
 
 ##################################################################################################
 # Build the PRIVATE GRAPHENE web wallet and move it to the web root folder.                      #

@@ -81,10 +81,10 @@
           {
             "name": "BitShares-API",
             "properties": {
-              "description": "API for accessing BitShares UI",
+              "description": "P2P port for hosting BitShares seed node",
               "protocol": "Tcp",
               "sourcePortRange": "*",
-              "destinationPortRange": "8090",
+              "destinationPortRange": "1776",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
