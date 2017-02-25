@@ -11,6 +11,9 @@
     "adminPassword": {
       "value": "GEN-PASSWORD"
     },
+    "accountNamesCommaDelimited": {
+      "value": "listOfNames"
+    },
     "vmSize": {
       "value": "Standard_A2"
     }
