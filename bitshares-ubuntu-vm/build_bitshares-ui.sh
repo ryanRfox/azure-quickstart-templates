@@ -29,11 +29,13 @@ echo "PROJECT: $PROJECT"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
 
-apt-get -y remove walinuxagent
+sudo dpkg --configure -a
+echo "Begin Update..."
 apt-get update 
+echo "Begin Upgrade..."
 apt-get upgrade -y
+echo "Upgrade complete."
 
-echo "Upgrad complete."
 ##############################################################################################
 # Clone the Graphene project from the Cryptonomex source repository. Initialize the project. #
 # Eliminate the test folder to speed up the build time by about 20%. Modify the config.hpp   #
