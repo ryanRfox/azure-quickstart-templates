@@ -22,15 +22,15 @@ echo "ACCOUNT_NAMES : $ACCOUNT_NAMES"
 echo "FQDN: $FQDN"
 echo "nproc: $NPROC"
 echo "eth0: $LOCAL_IP"
-echo "RPC_PORT: $P2P_PORT"
+echo "P2P_PORT: $P2P_PORT"
 echo "RPC_PORT: $RPC_PORT"
 echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
 echo "PROJECT: $PROJECT"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
 
-apt update 
-apt upgrade -y
+apt-get update 
+apt-get upgrade -y
 
 echo "Upgrad complete."
 ##############################################################################################
