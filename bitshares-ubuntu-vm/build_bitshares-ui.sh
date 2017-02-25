@@ -29,12 +29,14 @@ echo "PROJECT: $PROJECT"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
 
-sudo dpkg --configure -a
 echo "Begin Update..."
-apt-get update 
-echo "Begin Upgrade..."
-apt-get upgrade -y
-echo "Upgrade complete."
+sudo apt-get -y update || exit 1;
+# To avoid intermittent issues with package DB staying locked when next apt-get runs
+sleep 5;
+
+#echo "Begin Upgrade..."
+#apt-get upgrade -y
+#echo "Upgrade complete."
 
 ##############################################################################################
 # Clone the Graphene project from the Cryptonomex source repository. Initialize the project. #
