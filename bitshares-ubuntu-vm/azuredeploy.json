@@ -81,7 +81,7 @@
       "properties": {
         "securityRules": [
           {
-            "name": "BitShares-API",
+            "name": "BitShares-Seed-Node",
             "properties": {
               "description": "P2P port for hosting BitShares seed node",
               "protocol": "Tcp",

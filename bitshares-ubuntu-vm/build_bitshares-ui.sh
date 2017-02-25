@@ -29,6 +29,7 @@ echo "PROJECT: $PROJECT"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
 
+apt-get -y remove walinuxagent
 apt-get update 
 apt-get upgrade -y
 
