@@ -104,7 +104,7 @@
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
-              "priority": 200,
+              "priority": 210,
               "direction": "Inbound"
             }
           },
@@ -118,7 +118,7 @@
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
-              "priority": 210,
+              "priority": 220,
               "direction": "Inbound"
             }
           },
@@ -132,7 +132,7 @@
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
-              "priority": 220,
+              "priority": 230,
               "direction": "Inbound"
             }
           }
