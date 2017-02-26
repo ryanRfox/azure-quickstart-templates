@@ -279,9 +279,11 @@ service $PROJECT start
 ##################################################################################################
 time apt install -y apache2 npm
 cd /usr/local/src
-time curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
+wget https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh
+bash install.sh
 source ~/.profile
 nvm install v6
+echo "nvm installed."
 
 ##################################################################################################
 # Clone and install the PRIVATE GRAPHENE web wallet.                                             #
