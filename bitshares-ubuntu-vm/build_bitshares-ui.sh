@@ -187,7 +187,7 @@ time apt -y install ntp g++ make cmake libbz2-dev libdb++-dev libdb-dev libssl-d
 # Build the PRIVATE GRAPHENE witness node and CLI wallet.                                    #
 ##############################################################################################
 cd /usr/local/src/$PROJECT/
-make clean
+#make clean
 find . -name "CMakeCache.txt" | xargs rm -f
 find . -name "CMakeFiles" | xargs rm -Rf
 time cmake -DCMAKE_BUILD_TYPE=Debug \
