@@ -95,6 +95,20 @@
             }
           },
           {
+            "name": "BitShares-RCP",
+            "properties": {
+              "description": "RPC port for hosting BitShares web service",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8899",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 200,
+              "direction": "Inbound"
+            }
+          },
+          {
             "name": "BitShares-Web-Wallet",
             "properties": {
               "description": "NodeJS site hosting the BitShares web wallet",

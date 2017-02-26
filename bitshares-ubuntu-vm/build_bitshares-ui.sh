@@ -59,7 +59,7 @@ pip3 install pip --upgrade
 cd /usr/local/src
 time git clone https://github.com/xeroc/python-graphenelib.git
 cd python-graphenelib
-pip3 install autobahn pycrypto # python-requests # graphenelib 
+pip3 install autobahn pycrypto graphenelib # python-requests
 python3 setup.py install --user
 
 ##################################################################################################
