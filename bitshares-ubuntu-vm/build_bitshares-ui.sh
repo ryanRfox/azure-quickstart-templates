@@ -281,7 +281,7 @@ time apt install -y apache2 npm
 cd /usr/local/src
 wget https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh
 bash install.sh
-source ~/.profile
+#source ~/.profile
 nvm install v6
 echo "nvm installed."
 
