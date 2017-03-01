@@ -34,10 +34,6 @@ sudo apt-get -y update || exit 1;
 # To avoid intermittent issues with package DB staying locked when next apt-get runs
 sleep 5;
 
-#echo "Begin Upgrade..."
-#apt-get upgrade -y
-#echo "Upgrade complete."
-
 ##############################################################################################
 # Clone the Graphene project from the Cryptonomex source repository. Initialize the project. #
 # Eliminate the test folder to speed up the build time by about 20%. Modify the config.hpp   #
@@ -59,7 +55,7 @@ pip3 install pip --upgrade
 cd /usr/local/src
 time git clone https://github.com/xeroc/python-graphenelib.git
 cd python-graphenelib
-pip3 install autobahn pycrypto graphenelib # python-requests
+pip3 install autobahn pycrypto graphenelib 
 python3 setup.py install --user
 
 ##################################################################################################
@@ -175,6 +171,7 @@ time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforp
 python3 modify_genesis.py $ACCOUNT_NAMES /home/$USER_NAME/key_gen/my-genesis.json
 sed -i 's/TEST/GPH/g' /home/$USER_NAME/key_gen/account_keys.json
 sed -i 's/TEST/GPH/g' /home/$USER_NAME/key_gen/my-genesis.json
+sed -i 's/nathan/ryanrfox/g' /home/$USER_NAME/key_gen/my-genesis.json
 cp /home/$USER_NAME/key_gen/my-genesis.json /usr/local/src/$PROJECT/genesis.json
 
 ##############################################################################################
@@ -274,13 +271,14 @@ sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/confi
 python3 modify_config.py /home/$USER_NAME/graphene/witness_node/config.ini /home/$USER_NAME/key_gen/account_keys.json
 service $PROJECT start
 
+cat >/home/$USER_NAME/key_gen/setup_ui.sh <<EOL
 ##################################################################################################
 # Install all necessary packages for building the PRIVATE GRAPHENE web wallet.                   # 
 ##################################################################################################
 time apt install -y apache2 npm
 cd /usr/local/src
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
-# source ~/.profile
+source ~/.profile
 nvm install v6
 echo "nvm installed."
 
@@ -294,10 +292,12 @@ nvm use v6
 npm install
 
 ##################################################################################################
-# Configure PRIVATE GRAPHENE-UI to default to this VM (Replaces OpenLedger)                      #
+# Configure PRIVATE GRAPHENE-UI to default to this host (Replaces OpenLedger) and disable the    #
+# chat feature by default.                                                                       #
 ##################################################################################################
 sed -i 's%let apiServer = \[%let apiServer = [\n            {url: "ws://'$FQDN':'$RPC_PORT'/ws", location: "Azure Cloud"},%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
 sed -i 's%apiServer: "wss://bitshares.openledger.info/ws"%apiServer: "ws://'$FQDN':'$RPC_PORT'/ws"%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
+sed -i 's/apiServer: "disableChat: false/disableChat: true/g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
 
 ##################################################################################################
 # Build the PRIVATE GRAPHENE web wallet and move it to the web root folder.                      #
@@ -319,3 +319,4 @@ service apache2 restart
 # The fully qualified domain name (FQDN) can be found within the Azure Portal under "DNS name"   #
 # Learn more: http://docs.bitshares.eu                                                           #
 ##################################################################################################
+EOL
