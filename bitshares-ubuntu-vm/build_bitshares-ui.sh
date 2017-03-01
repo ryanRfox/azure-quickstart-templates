@@ -54,8 +54,9 @@ apt -y install libffi-dev libssl-dev python-dev python3-pip
 pip3 install pip --upgrade
 cd /usr/local/src
 time git clone https://github.com/xeroc/python-graphenelib.git
+git checkout add-account-whitelist 
 cd python-graphenelib
-pip3 install autobahn pycrypto graphenelib 
+#pip3 install autobahn pycrypto graphenelib 
 python3 setup.py install --user
 
 ##################################################################################################
