@@ -56,7 +56,7 @@ cd /usr/local/src
 time git clone https://github.com/xeroc/python-graphenelib.git
 cd python-graphenelib
 git checkout 0.4.8
-#pip3 install autobahn pycrypto graphenelib 
+pip3 install autobahn pycrypto graphenelib 
 python3 setup.py install --user
 
 ##################################################################################################
