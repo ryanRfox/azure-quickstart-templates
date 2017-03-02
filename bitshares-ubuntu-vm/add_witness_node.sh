@@ -56,6 +56,11 @@ chmod +x $WITNESS_NODE
 time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/$CLI_WALLET
 chmod +x $CLI_WALLET
 
+mkdir /home/$USER_NAME/key_gen
+cd /home/$USER_NAME/key_gen
+time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/testnet_cli_wallet
+chmod +x testnet_cli_wallet
+
 ##################################################################################################
 # Configure graphene service. Enable it to start on boot.                                        #
 ##################################################################################################
@@ -81,7 +86,7 @@ service $PROJECT stop
 ##################################################################################################
 # Create a python script to modify the config.ini file with our custom values.                   #
 ##################################################################################################
-cat >/home/$USER_NAME/modify_config.py <<EOL
+cat >/home/$USER_NAME/key_gen/modify_config.py <<EOL
 # Call this script with: modify_config.py <config_file> <witness_object_id>
 import sys
 import time
@@ -112,29 +117,28 @@ def stopCliWallet(screen_name):
     print("Closing CLI_Wallet...")
     subprocess.call(["screen","-S",screen_name,"-p","0","-X","quit"])
 
-def modifyConfig(file, objId):
+def modifyConfig(sourceFile, objId):
     myBrainKeyJson     = graphene.rpc.suggest_brain_key()
-    print(myBrainKeyJson)
-    witnessIdStr = witnessIdStr + "witness-id  = \"1.6."+str(objId)+"\"\n"
-    privateKeyStr = privateKeyStr + "private-key = [\""+myBrainKeyJson[0]['keys']["pub_key"]+"\",\""+myBrainKeyJson[0]['keys']["wif_priv_key"]+"\"]\n"
-
-    with fileinput.FileInput(file, inplace=True, backup='.bak') as file:
+    witnessIdStr  = "witness-id  = \"1.6."+str(objId)+"\"""
+    privateKeyStr = "private-key = [\""+myBrainKeyJson["pub_key"]+"\",\""+myBrainKeyJson["wif_priv_key"]+"\"]"
+    with fileinput.FileInput(sourceFile, inplace=True, backup='.bak') as file:
         for line in file:
             print(line.replace('# witness-id =', witnessIdStr), end='')
-    with fileinput.FileInput(file, inplace=True, backup='.bak') as file:
+    with fileinput.FileInput(configSourcePath, inplace=True, backup='.bak') as file:
         for line in file:
             print(line.replace('# Tuple of [PublicKey, WIF private key] (may specify multiple times)', '# Tuple of [PublicKey, WIF private key] (may specify multiple times)\n'+privateKeyStr), end='')
 
 if __name__ == '__main__':
-    startCliWallet("testnet_cli_wallet","/usr/bin/$CLI_WALLET","wss://node.testnet.bitshares.eu/","127.0.0.1:8092","/home/$USER_NAME/key_gen/wallet.json")
-    time.sleep(5)
+    startCliWallet("testnet_cli_wallet","/home/$USER_NAME/key_gen/testnet_cli_wallet","wss://node.testnet.bitshares.eu/","127.0.0.1:8092","/home/$USER_NAME/key_gen/wallet.json")
+    time.sleep(2)
     graphene = GrapheneClient(Config)
-    modifyConfig(configSourcePath,accountsJsonPath)
+    modifyConfig(configSourcePath,withnessObjectId)
     stopCliWallet("testnet_cli_wallet")
     print("Done.")
 
 EOL
 
 python3 modify_config.py /home/$USER_NAME/graphene/witness_node/config.ini $WITNESS_ID
+sed -i 's/TEST/GPH/g' /home/$USER_NAME/graphene/witness_node/config.ini
 
 service $PROJECT start
