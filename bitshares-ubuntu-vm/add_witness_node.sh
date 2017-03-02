@@ -82,7 +82,7 @@ service $PROJECT stop
 ##################################################################################################
 # Create a python script to modify the config.ini file with our custom values.                   #
 ##################################################################################################
-cat >/home/$USER_NAME/key_gen/modify_config.py <<EOL
+cat >/home/$USER_NAME/modify_config.py <<EOL
 # Call this script with: modify_config.py <config_file> <witness_object_id>
 import sys
 import time
