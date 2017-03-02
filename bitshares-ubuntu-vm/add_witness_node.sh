@@ -117,14 +117,15 @@ def stopCliWallet(screen_name):
     print("Closing CLI_Wallet...")
     subprocess.call(["screen","-S",screen_name,"-p","0","-X","quit"])
 
-def startWitnessNode(screen_name,witness_node_path,data-dir,seed-node):
+def startWitnessNode(screen_name,witness_node_path,data_dir,seed_node):
     print("Starting Witness_Node...")
-    subprocess.call(["screen","-dmS",screen_name,witness_node_path,"--data-dir",data-dir,"--seed-node",seed-node])
+    subprocess.call(["screen","-dmS",screen_name,witness_node_path,"--data-dir",data_dir,"--seed-node",seed_node])
 
 def modifyConfig(sourceFile, objId):
     myBrainKeyJson     = graphene.rpc.suggest_brain_key()
     witnessIdStr  = "witness-id  = \"1.6."+str(objId)+"\""
     privateKeyStr = "private-key = [\""+myBrainKeyJson["pub_key"]+"\",\""+myBrainKeyJson["wif_priv_key"]+"\"]"
+    privateKeyStr = privateKeyStr.replace("TEST", "GPH")
     with fileinput.FileInput(sourceFile, inplace=True, backup='.bak') as file:
         for line in file:
             print(line.replace('# witness-id =', witnessIdStr), end='')
@@ -138,12 +139,12 @@ if __name__ == '__main__':
     graphene = GrapheneClient(Config)
     modifyConfig(configSourcePath,withnessObjectId)
     stopCliWallet("testnet_cli_wallet")
+    time.sleep(2)
     startWitnessNode("graphene_witness_node","/usr/bin/$WITNESS_NODE","/home/$USER_NAME/$PROJECT/witness_node","$SEED_NODE:$P2P_PORT")
     print("Done.")
 
 EOL
 
 python3 modify_config.py /home/$USER_NAME/graphene/witness_node/config.ini $WITNESS_ID
-sed -i 's/TEST/GPH/g' /home/$USER_NAME/graphene/witness_node/config.ini
 
 service $PROJECT start
