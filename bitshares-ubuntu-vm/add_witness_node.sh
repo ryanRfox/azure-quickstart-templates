@@ -49,11 +49,10 @@ python3 setup.py install --user
 # Download the pre-compiled witness_node and cli_wallet provided by the trusted source for this  #
 # the GRAPHENE TEST.                                                                             #
 ##################################################################################################
-cd  /usr/bin/$WITNESS_NODE
+cd  /usr/bin/
 time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/$WITNESS_NODE
 chmod +x $WITNESS_NODE
 
-cd  /usr/bin/$CLI_WALLET
 time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/$CLI_WALLET
 chmod +x $CLI_WALLET
 
