@@ -298,7 +298,14 @@ npm install
 ##################################################################################################
 sed -i 's%let apiServer = \[%let apiServer = [\n            {url: "ws://'$FQDN':'$RPC_PORT'/ws", location: "Azure Cloud"},%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
 sed -i 's%apiServer: "wss://bitshares.openledger.info/ws"%apiServer: "ws://'$FQDN':'$RPC_PORT'/ws"%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
-sed -i 's/apiServer: "disableChat: false/disableChat: true/g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
+sed -i 's%faucet_address: "https://bitshares.openledger.info"%faucet_address: ""%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
+sed -i 's%disableChat: false%disableChat: true%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
+sed -i 's%BitShares%Graphene%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
+sed -i 's%Bitshares%Graphene%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
+sed -i 's%bitshares%graphene%g' /usr/local/src/graphene-ui/web/app/stores/SettingsStore.js
+sed -i 's%BitShares%Graphene%g' /usr/local/src/graphene-ui/web/app/assets/locales/locale-en.json
+sed -i 's%Bitshares%Graphene%g' /usr/local/src/graphene-ui/web/app/assets/locales/locale-en.json
+sed -i 's%bitshares%graphene%g' /usr/local/src/graphene-ui/web/app/assets/locales/locale-en.json
 
 ##################################################################################################
 # Build the PRIVATE GRAPHENE web wallet and move it to the web root folder.                      #
