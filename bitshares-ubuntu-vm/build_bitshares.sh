@@ -14,7 +14,8 @@ USER_NAME=$1
 # Update Ubuntu and install prerequisites for running BitShares                                  #
 ##################################################################################################
 time apt-get -y update
-time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev libssl-dev openssl libreadline-dev autoconf libtool libboost-all-dev
+time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev libssl-dev \
+                        openssl libreadline-dev autoconf libtool libboost-all-dev
 
 ##################################################################################################
 # Build BitShares from source                                                                    #
@@ -22,6 +23,7 @@ time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev 
 cd /usr/local
 time git clone https://github.com/bitshares/bitshares-2.git
 cd bitshares-2/
+time git checkcout 2.0.160328 # Latest Full Node Version
 time git submodule update --init --recursive
 time cmake -DCMAKE_BUILD_TYPE=Release .
 time make -j$NPROC
