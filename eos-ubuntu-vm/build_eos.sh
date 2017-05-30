@@ -47,7 +47,20 @@ time git submodule update --init --recursive
 # Install all necessary packages for building the project.                                       #
 ##################################################################################################
 time apt -y install ntp g++ make cmake libbz2-dev libssl-dev autoconf automake libtool \
-                    pkg-config libboost-all-dev libreadline-dev doxygen libncurses5-dev
+                    pkg-config libreadline-dev doxygen libncurses5-dev
+
+##################################################################################################
+# Build Boost 1.60                                                                               #
+##################################################################################################
+cd /usr/local
+wget -O boost_1_60_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.60.0/boost_1_60_0.tar.gz
+tar -xf boost_1_60_0.tar.gz
+cd boost_1_60_0
+./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
+time /b2 install
+PATH=$PATH:/usr/local/lib/boost_1_60_0
+rm boost_1_60_0.tar.gz
+rm -rd /usr/local/boost_1_60_0
 
 ##################################################################################################
 # Build the project.                                                                             #
