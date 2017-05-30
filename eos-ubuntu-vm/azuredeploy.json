@@ -242,7 +242,7 @@
           "fileUris": [
             "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/eos/eos-ubuntu-vm/build_eos.sh"
           ],
-          "commandToExecute": "[concat('sh add_witness_node.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn, ' ', parameters('accountNamesCommaDelimited'))]"
+          "commandToExecute": "[concat('sh build_eos.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn)]"
         }
       }
     }
