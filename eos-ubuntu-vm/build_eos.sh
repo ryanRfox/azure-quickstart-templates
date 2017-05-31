@@ -18,7 +18,6 @@ WITNESS_NODE=eos_producer_node
 CLI_WALLET=eosd
 
 echo "USER_NAME: $USER_NAME"
-echo "ACCOUNT_NAMES : $ACCOUNT_NAMES"
 echo "FQDN: $FQDN"
 echo "nproc: $NPROC"
 echo "eth0: $LOCAL_IP"
@@ -57,7 +56,7 @@ wget -O boost_1_60_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.
 tar -xf boost_1_60_0.tar.gz
 cd boost_1_60_0
 ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
-time /b2 install
+time ./b2 install
 PATH=$PATH:/usr/local/lib/boost_1_60_0
 rm boost_1_60_0.tar.gz
 rm -rd /usr/local/boost_1_60_0
