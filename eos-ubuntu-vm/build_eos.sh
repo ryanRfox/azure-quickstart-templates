@@ -58,7 +58,18 @@ time ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
 time ./b2 install
 PATH=$PATH:/usr/local/lib/boost_1_60_0
 rm /usr/local/boost_1_60_0.tar.gz
-rm -rd /usr/local/boost_1_60_0
+# rm -rd /usr/local/boost_1_60_0
+
+##################################################################################################
+# Build secp256k1-zkp.                                                                             #
+##################################################################################################
+cd /usr/local/src/
+git clone https://github.com/cryptonomex/secp256k1-zkp.git 
+cd secp256k1-zkp
+./autogen.sh 
+./configure 
+make 
+make install
 
 ##################################################################################################
 # Build the project.                                                                             #
