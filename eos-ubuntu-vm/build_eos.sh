@@ -12,7 +12,7 @@ LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 RPC_PORT=8090
 P2P_PORT=1776
 PROJECT=eos
-GITHUB_REPOSITORY=https://github.com/ryanrfox/eos.git
+GITHUB_REPOSITORY=https://github.com/eosio/eos.git
 WITNESS_NODE=eosd
 CLI_WALLET=eos_wallet
 
