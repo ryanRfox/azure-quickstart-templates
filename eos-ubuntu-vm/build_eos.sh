@@ -45,7 +45,7 @@ time git submodule update --init --recursive
 # Install all necessary packages for building the project.                                       #
 ##################################################################################################
 time apt -y install ntp g++ make cmake libbz2-dev libssl-dev autoconf automake libtool \
-                    pkg-config libreadline-dev doxygen libncurses5-dev
+                    python-dev pkg-config libreadline-dev doxygen libncurses5-dev
 
 ##################################################################################################
 # Build Boost 1.60                                                                               #
