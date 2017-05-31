@@ -58,7 +58,7 @@ cd boost_1_60_0
 ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
 time ./b2 install
 PATH=$PATH:/usr/local/lib/boost_1_60_0
-rm boost_1_60_0.tar.gz
+rm /usr/local/boost_1_60_0.tar.gz
 rm -rd /usr/local/boost_1_60_0
 
 ##################################################################################################
