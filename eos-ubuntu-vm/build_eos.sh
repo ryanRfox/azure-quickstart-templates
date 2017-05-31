@@ -7,15 +7,14 @@ ps axjf
 
 USER_NAME=$1
 FQDN=$2
-ACCOUNT_NAMES=$3
 NPROC=$(nproc)
 LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 RPC_PORT=8090
 P2P_PORT=1776
 PROJECT=eos
-GITHUB_REPOSITORY=https://github.com/eosio/eos.git
-WITNESS_NODE=eos_producer_node
-CLI_WALLET=eosd
+GITHUB_REPOSITORY=https://github.com/ryanrfox/eos.git
+WITNESS_NODE=eosd
+CLI_WALLET=eos_wallet
 
 echo "USER_NAME: $USER_NAME"
 echo "FQDN: $FQDN"
@@ -55,7 +54,7 @@ cd /usr/local
 wget -O boost_1_60_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.60.0/boost_1_60_0.tar.gz
 tar -xf boost_1_60_0.tar.gz
 cd boost_1_60_0
-./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
+time ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
 time ./b2 install
 PATH=$PATH:/usr/local/lib/boost_1_60_0
 rm /usr/local/boost_1_60_0.tar.gz

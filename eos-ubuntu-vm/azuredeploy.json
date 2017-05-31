@@ -20,12 +20,6 @@
         "description": "Hostname assigned to the Public IP, also used as the VM Name. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
       }
     },
-    "accountNamesCommaDelimited": {
-      "type": "string",
-      "metadata": {
-        "description": "A comma separated list of names. Must be lowercase. (e.g. alpha,bravo,charlie,delta,echo,foxtrot)"
-      }
-    },
     "vmSize": {
       "type": "string",
       "defaultValue": "Standard_DS2_V2",
