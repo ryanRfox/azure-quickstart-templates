@@ -45,31 +45,34 @@ time git submodule update --init --recursive
 # Install all necessary packages for building the project.                                       #
 ##################################################################################################
 time apt -y install ntp g++ make cmake libbz2-dev libssl-dev autoconf automake libtool \
-                    python-dev pkg-config libreadline-dev doxygen libncurses5-dev
+                    python-dev pkg-config libreadline-dev doxygen libncurses5-dev \
+                    libboost-all-dev 
 
 ##################################################################################################
 # Build Boost 1.60                                                                               #
 ##################################################################################################
-cd /usr/local
-wget -O boost_1_60_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.60.0/boost_1_60_0.tar.gz
-tar -xf boost_1_60_0.tar.gz
-cd boost_1_60_0
-time ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
-time ./b2 install
-PATH=$PATH:/usr/local/lib/boost_1_60_0
-rm /usr/local/boost_1_60_0.tar.gz
+# cd /usr/local
+# wget -O boost_1_60_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.60.0/boost_1_60_0.tar.gz
+# tar -xf boost_1_60_0.tar.gz
+# cd boost_1_60_0
+# time ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
+# time ./b2 install
+# PATH=$PATH:/usr/local/lib/boost_1_60_0
+# rm /usr/local/boost_1_60_0.tar.gz
 # rm -rd /usr/local/boost_1_60_0
 
 ##################################################################################################
-# Build secp256k1-zkp.                                                                             #
+# Build secp256k1-zkp.                                                                           #
 ##################################################################################################
 cd /usr/local/src/
 git clone https://github.com/cryptonomex/secp256k1-zkp.git 
 cd secp256k1-zkp
 ./autogen.sh 
-./configure 
+./configure --prefix=/usr --sbindir=/usr/bin --libexecdir=/usr/lib/libsecp256k1 \
+            --sysconfdir=/etc --sharedstatedir=/usr/share/libsecp256k1 \
+            --localstatedir=/var/lib/libsecp256k1 --disable-tests --with-gnu-ld
 make 
-make install
+install
 
 ##################################################################################################
 # Build the project.                                                                             #
