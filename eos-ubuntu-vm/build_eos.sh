@@ -33,33 +33,24 @@ sudo apt-get -y update || exit 1;
 sleep 5;
 
 ##################################################################################################
-# Clone the project from the source repository. Initialize the project.                          #
-##################################################################################################
-echo "Clone $PROJECT project"
-cd /usr/local/src
-time git clone $GITHUB_REPOSITORY
-cd $PROJECT
-time git submodule update --init --recursive
-
-##################################################################################################
 # Install all necessary packages for building the project.                                       #
 ##################################################################################################
 time apt -y install ntp g++ make cmake libbz2-dev libssl-dev autoconf automake libtool \
                     python-dev pkg-config libreadline-dev doxygen libncurses5-dev \
-                    libboost-all-dev 
+#                    libboost-all-dev 
 
 ##################################################################################################
 # Build Boost 1.60                                                                               #
 ##################################################################################################
-# cd /usr/local
-# wget -O boost_1_60_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.60.0/boost_1_60_0.tar.gz
-# tar -xf boost_1_60_0.tar.gz
-# cd boost_1_60_0
-# time ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
-# time ./b2 install
-# PATH=$PATH:/usr/local/lib/boost_1_60_0
-# rm /usr/local/boost_1_60_0.tar.gz
-# rm -rd /usr/local/boost_1_60_0
+cd /usr/local
+wget -O boost_1_60_0.tar.gz http://sourceforge.net/projects/boost/files/boost/1.60.0/boost_1_60_0.tar.gz
+tar -xf boost_1_60_0.tar.gz
+cd boost_1_60_0
+time ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
+time ./b2 install
+PATH=$PATH:/usr/local/lib/boost_1_60_0
+rm /usr/local/boost_1_60_0.tar.gz
+rm -rd /usr/local/boost_1_60_0
 
 ##################################################################################################
 # Build secp256k1-zkp.                                                                           #
@@ -72,17 +63,21 @@ cd secp256k1-zkp
             --sysconfdir=/etc --sharedstatedir=/usr/share/libsecp256k1 \
             --localstatedir=/var/lib/libsecp256k1 --disable-tests --with-gnu-ld
 make 
-install
+make install
 
 ##################################################################################################
 # Build the project.                                                                             #
 ##################################################################################################
-cd /usr/local/src/$PROJECT/
+echo "Clone $PROJECT project"
+cd /usr/local/src
+time git clone $GITHUB_REPOSITORY
+cd $PROJECT
+time git submodule update --init --recursive
 time cmake -DCMAKE_BUILD_TYPE=Debug .
 time make -j$NPROC
 
 ##################################################################################################
-# Configure graphene service. Enable it to start on boot.                                        #
+# Configure service. Enable it to start on boot.                                        #
 ##################################################################################################
 cat >/lib/systemd/system/$PROJECT.service <<EOL
 [Unit]
