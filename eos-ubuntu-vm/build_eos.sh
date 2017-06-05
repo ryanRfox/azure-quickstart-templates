@@ -35,9 +35,8 @@ sleep 5;
 ##################################################################################################
 # Install all necessary packages for building the project.                                       #
 ##################################################################################################
-time apt -y install ntp g++ make cmake libbz2-dev libssl-dev autoconf automake libtool \
-                    python-dev pkg-config libreadline-dev doxygen libncurses5-dev \
-#                    libboost-all-dev 
+time apt -y install ntp g++ make cmake libbz2-dev libssl-dev autoconf automake libtool\
+                     clang++-3.8 python-dev pkg-config libreadline-dev doxygen libncurses5-dev \
 
 ##################################################################################################
 # Build Boost 1.60                                                                               #
@@ -48,7 +47,7 @@ tar -xf boost_1_60_0.tar.gz
 cd boost_1_60_0
 time ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
 time ./b2 install
-PATH=$PATH:/usr/local/lib/boost_1_60_0
+BOOST_ROOR=/usr/local/lib/boost_1_60_0
 rm /usr/local/boost_1_60_0.tar.gz
 rm -rd /usr/local/boost_1_60_0
 
@@ -73,7 +72,8 @@ cd /usr/local/src
 time git clone $GITHUB_REPOSITORY
 cd $PROJECT
 time git submodule update --init --recursive
-time cmake -DCMAKE_BUILD_TYPE=Debug .
+sed -i 's/add_subdirectory( tests )/#add_subdirectory( tests )/g' /usr/local/src/$PROJECT/CMakeLists.txt
+time cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=/usr/bin/clang++-3.8 -DCMAKE_C_COMPILER=/usr/bin/clang-3.8 .
 time make -j$NPROC
 
 ##################################################################################################
