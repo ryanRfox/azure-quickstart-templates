@@ -9,23 +9,25 @@ USER_NAME=$1
 FQDN=$2
 NPROC=$(nproc)
 LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
-RPC_PORT=8090
-P2P_PORT=1776
 PROJECT=eos
 GITHUB_REPOSITORY=https://github.com/eosio/eos.git
-WITNESS_NODE=eosd
+BUILD_TYPE=Debug
+PRODUCER_NODE=eosd
 CLI_WALLET=eos_wallet
+RPC_PORT=8090
+P2P_PORT=1776
 
 echo "USER_NAME: $USER_NAME"
 echo "FQDN: $FQDN"
 echo "nproc: $NPROC"
 echo "eth0: $LOCAL_IP"
-echo "P2P_PORT: $P2P_PORT"
-echo "RPC_PORT: $RPC_PORT"
 echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
 echo "PROJECT: $PROJECT"
-echo "WITNESS_NODE: $WITNESS_NODE"
+echo "BUILD_TYPE: $BUILD_TYPE"
+echo "PRODUCER_NODE: $PRODUCER_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
+echo "P2P_PORT: $P2P_PORT"
+echo "RPC_PORT: $RPC_PORT"
 
 echo "Begin Update..."
 sudo apt-get -y update || exit 1;
@@ -35,8 +37,8 @@ sleep 5;
 ##################################################################################################
 # Install all necessary packages for building the project.                                       #
 ##################################################################################################
-time apt -y install ntp g++ make cmake libbz2-dev libssl-dev autoconf automake libtool\
-                     clang++-3.8 python-dev pkg-config libreadline-dev doxygen libncurses5-dev \
+time apt -y install ntp clang++-3.8 make cmake libbz2-dev libssl-dev autoconf automake libtool\
+                    python-dev pkg-config libreadline-dev doxygen libncurses5-dev \
 
 ##################################################################################################
 # Build Boost 1.60                                                                               #
@@ -47,7 +49,7 @@ tar -xf boost_1_60_0.tar.gz
 cd boost_1_60_0
 time ./bootstrap.sh --prefix=/usr/local/lib/boost_1_60_0
 time ./b2 install
-BOOST_ROOR=/usr/local/lib/boost_1_60_0
+PATH=$PATH:/usr/local/lib/boost_1_60_0
 rm /usr/local/boost_1_60_0.tar.gz
 rm -rd /usr/local/boost_1_60_0
 
@@ -73,8 +75,11 @@ time git clone $GITHUB_REPOSITORY
 cd $PROJECT
 time git submodule update --init --recursive
 sed -i 's/add_subdirectory( tests )/#add_subdirectory( tests )/g' /usr/local/src/$PROJECT/CMakeLists.txt
-time cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=/usr/bin/clang++-3.8 -DCMAKE_C_COMPILER=/usr/bin/clang-3.8 .
+time cmake -DCMAKE_CXX_COMPILER=/usr/bin/clang++-3.8 -DCMAKE_C_COMPILER=/usr/bin/clang-3.8 \
+           -DCMAKE_BUILD_TYPE=$BUILD_TYPE .
 time make -j$NPROC
+
+cp /usr/local/src/$PROJECT/programs/$PRODUCER_NODE/$PRODUCER_NODE /usr/bin/$PRODUCER_NODE
 
 ##################################################################################################
 # Configure service. Enable it to start on boot.                                        #
@@ -84,9 +89,9 @@ cat >/lib/systemd/system/$PROJECT.service <<EOL
 Description=Job that runs $PROJECT daemon
 [Service]
 Type=simple
-Environment=statedir=/home/$USER_NAME/$PROJECT/producer_node
-ExecStartPre=/bin/mkdir -p /home/$USER_NAME/$PROJECT/producer_node
-ExecStart=/usr/bin/$WITNESS_NODE --data-dir /home/$USER_NAME/$PROJECT/producer_node
+Environment=statedir=/home/$USER_NAME/$PROJECT/$PRODUCER_NODE
+ExecStartPre=/bin/mkdir -p /home/$USER_NAME/$PROJECT/$PRODUCER_NODE
+ExecStart=/usr/bin/$PRODUCER_NODE --data-dir /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir
 TimeoutSec=300
 [Install]
 WantedBy=multi-user.target
@@ -94,6 +99,16 @@ EOL
 
 systemctl daemon-reload
 systemctl enable $PROJECT
+service $PROJECT start
+service $PROJECT stop
+
+cp /usr/local/src/$PROJECT/genesis.json /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/
+sed -i 's%# genesis-json =%genesis-json =/home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
+sed -i 's%enable-stale-production = false%enable-stale-production = true%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
+sed -i 's%# producer-id =%producer-id = {"_id":1}\nproducer-id = {"_id":2}\nproducer-id = {"_id":3}\nproducer-id = {"_id":4}\nproducer-id = {"_id":5}%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
+sed -i 's%producer-id = {"_id":5}%producer-id = {"_id":5}\nproducer-id = {"_id":6}\nproducer-id = {"_id":7}\nproducer-id = {"_id":8}\nproducer-id = {"_id":9}\nproducer-id = {"_id":10}%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
+sed -i 's%# plugin =%plugin = eos::producer_plugin%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
+
 service $PROJECT start
 
 ##################################################################################################
