@@ -30,15 +30,28 @@ echo "P2P_PORT: $P2P_PORT"
 echo "RPC_PORT: $RPC_PORT"
 
 echo "Begin Update..."
-sudo apt-get -y update || exit 1;
+apt-get -y update || exit 1;
 # To avoid intermittent issues with package DB staying locked when next apt-get runs
 sleep 5;
 
 ##################################################################################################
 # Install all necessary packages for building the project.                                       #
 ##################################################################################################
-time apt -y install ntp clang++-3.8 make cmake libbz2-dev libssl-dev autoconf automake libtool\
-                    python-dev pkg-config libreadline-dev doxygen libncurses5-dev \
+time apt -y install ntp make cmake libbz2-dev libssl-dev autoconf automake libtool\
+                    python-dev pkg-config libreadline-dev doxygen libncurses5-dev
+
+##################################################################################################
+# Install clang 4.0 for Xenial.                                                                  #
+##################################################################################################
+cat <<EOL >> /etc/apt/sources.list
+# LLVM Toolchain
+deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-4.0 main
+deb-src http://apt.llvm.org/xenial/ llvm-toolchain-xenial-4.0 main
+EOL
+wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
+apt-get -y update || exit 1;
+sleep 5;
+apt-get install clang-4.0 lldb-4.0 lld-4.0
 
 ##################################################################################################
 # Build Boost 1.60                                                                               #
@@ -107,7 +120,7 @@ sed -i 's%# genesis-json =%genesis-json =/home/$USER_NAME/$PROJECT/$PRODUCER_NOD
 sed -i 's%enable-stale-production = false%enable-stale-production = true%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
 sed -i 's%# producer-id =%producer-id = {"_id":1}\nproducer-id = {"_id":2}\nproducer-id = {"_id":3}\nproducer-id = {"_id":4}\nproducer-id = {"_id":5}%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
 sed -i 's%producer-id = {"_id":5}%producer-id = {"_id":5}\nproducer-id = {"_id":6}\nproducer-id = {"_id":7}\nproducer-id = {"_id":8}\nproducer-id = {"_id":9}\nproducer-id = {"_id":10}%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
-sed -i 's%# plugin =%plugin = eos::producer_plugin%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
+sed -i 's%# plugin =%plugin = eos::producer_plugin\nplugin = eos::chain_api_plugin%g' /home/$USER_NAME/$PROJECT/$PRODUCER_NODE/data-dir/config.ini
 
 service $PROJECT start
 
