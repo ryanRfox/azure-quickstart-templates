@@ -88,9 +88,9 @@ time git clone $GITHUB_REPOSITORY
 cd $PROJECT
 time git submodule update --init --recursive
 mv /usr/local/src/$PROJECT/programs/$PRODUCER_NODE/main.cpp /home/$USER_NAME/
+sed -i 's/PRIVATE appbase/PRIVATE appbase native_system_contract_plugin/g' /usr/local/src/$PROJECT/programs/$PRODUCER_NODE/CMakeLists.txt
 wget -O /usr/local/src/$PROJECT/programs/$PRODUCER_NODE/main.cpp \
         https://gist.githubusercontent.com/elmato/764b03d94a9764c1b85073c4a580d246/raw/e646d4bd797b947c034b9ca86904b6bb51d44a64/main.cpp
-sed -i 's%PRIVATE appbase%PRIVATE appbase native_system_contract_plugin%g' /usr/local/src/$PROJECT/programs/$PRODUCER_NODE/CMakeLists.txt
 time cmake -DCMAKE_CXX_COMPILER=/usr/bin/clang++-4.0 -DCMAKE_C_COMPILER=/usr/bin/clang-4.0 \
            -DCMAKE_BUILD_TYPE=$BUILD_TYPE .
 time make -j$NPROC
