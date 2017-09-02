@@ -87,7 +87,11 @@ cd /usr/local/src
 time git clone $GITHUB_REPOSITORY
 cd $PROJECT
 time git submodule update --init --recursive
-mv /usr/local/src/$PROJECT/programs/$PRODUCER_NODE/main.cpp /home/$USER_NAME/
+sed -i 's%PRIVATE appbase%PRIVATE appbase native_contract%g' /usr/local/src/$PROJECT/programs/$PRODUCER_NODE/CMakeLists.txt
+sed -i 's%#include <eos/chain_api_plugin/chain_api_plugin.hpp>%#include <eos/chain_api_plugin/chain_api_plugin.hpp>\n#include <eos/http_plugin/http_plugin.hpp>
+\n#include <eos/native_system_contract_plugin/native_system_contract_plugin.hpp>%g' /usr/local/src/$PROJECT/programs/$PRODUCER_NODE/main.cpp
+
+
 time cmake -DCMAKE_CXX_COMPILER=/usr/bin/clang++-4.0 -DCMAKE_C_COMPILER=/usr/bin/clang-4.0 \
            -DCMAKE_BUILD_TYPE=$BUILD_TYPE .
 time make -j$NPROC
