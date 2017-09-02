@@ -95,34 +95,6 @@
             }
           },
           {
-            "name": "BitShares-RCP",
-            "properties": {
-              "description": "RPC port for hosting BitShares web service",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "8899",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 210,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "BitShares-Web-Wallet",
-            "properties": {
-              "description": "NodeJS site hosting the BitShares web wallet",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "80",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 220,
-              "direction": "Inbound"
-            }
-          },
-          {
             "name": "SSH",
             "properties": {
               "description": "SSH Access",
@@ -268,7 +240,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/dev/bitshares-ubuntu-vm/add_witness_node.sh"
+            "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/bts2-witness/bitshares-ubuntu-vm/add_witness_node.sh"
           ],
           "commandToExecute": "[concat('sh add_witness_node.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn, ' ', parameters('accountNamesCommaDelimited'))]"
         }
