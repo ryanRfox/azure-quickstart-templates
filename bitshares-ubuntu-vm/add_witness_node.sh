@@ -97,8 +97,8 @@ sed -i 's/add_subdirectory( js_operation_serializer )/#add_subdirectory( js_oper
 time cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE .
 time make -j$NPROC
 
-cp /usr/local/$PROJECT/programs/witness_node/witness_node /usr/bin/$WITNESS_NODE
-cp /usr/local/$PROJECT/programs/cli_wallet/cli_wallet /usr/bin/$CLI_WALLET
+cp /usr/local/src/$PROJECT/programs/witness_node/witness_node /usr/bin/$WITNESS_NODE
+cp /usr/local/src/$PROJECT/programs/cli_wallet/cli_wallet /usr/bin/$CLI_WALLET
 
 ##################################################################################################
 # Configure bitshares-core service. Enable it to start on boot.                                  #
