@@ -7,27 +7,29 @@ ps axjf
 
 USER_NAME=$1
 FQDN=$2
-WITNESS_ID=$3
+WITNESS_NAMES=$3
 NPROC=$(nproc)
 LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 RPC_PORT=8090
 P2P_PORT=1776
 GITHUB_REPOSITORY=https://github.com/bitshares/bitshares-core.git
-BUILD_TYPE=Release
 PROJECT=bitshares-core
 BRANCH=master
+BUILD_TYPE=Release
 WITNESS_NODE=bts-witness
 CLI_WALLET=bts-cli_wallet
 
 echo "USER_NAME: $USER_NAME"
-echo "WITNESS_ID : $WITNESS_ID"
+echo "WITNESS_NAMES : $WITNESS_NAMES"
 echo "FQDN: $FQDN"
 echo "nproc: $NPROC"
 echo "eth0: $LOCAL_IP"
 echo "P2P_PORT: $P2P_PORT"
 echo "RPC_PORT: $RPC_PORT"
-echo "SEED_NODE: $SEED_NODE"
+echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
 echo "PROJECT: $PROJECT"
+echo "BRANCH: $BRANCH"
+echo "BUILD_TYPE: $BUILD_TYPE"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
 
@@ -75,6 +77,8 @@ cd /usr/local/src
 time git clone $GITHUB_REPOSITORY
 cd $PROJECT
 time git checkout $RELEASE
+time git submodule update --init --recursive
+
 sed -i 's/add_subdirectory( tests )/#add_subdirectory( tests )/g' /usr/local/src/$PROJECT/CMakeLists.txt
 sed -i 's/add_subdirectory(tests)/#add_subdirectory(tests)/g' /usr/local/src/$PROJECT/libraries/fc/CMakeLists.txt
 sed -i 's%auto history_plug = node->register_plugin%//auto history_plug = node->register_plugin%g' /usr/local/src/$PROJECT/programs/witness_node/main.cpp
@@ -90,7 +94,6 @@ sed -i 's/add_subdirectory( genesis_util )/#add_subdirectory( genesis_util )/g' 
 sed -i 's/add_subdirectory( size_checker )/#add_subdirectory( size_checker )/g' /usr/local/src/$PROJECT/programs/CMakeLists.txt
 sed -i 's/add_subdirectory( js_operation_serializer )/#add_subdirectory( js_operation_serializer )/g' /usr/local/src/$PROJECT/programs/CMakeLists.txt
 
-time git submodule update --init --recursive
 time cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE .
 time make -j$NPROC
 
@@ -117,4 +120,14 @@ EOL
 systemctl daemon-reload
 systemctl enable $PROJECT
 service $PROJECT start
+
+# service $CLI_WALLET start
+# suggest_brain_key
+# get_witness $WITNESS_NAMES
 service $PROJECT stop
+
+# Modify config.ini to include witness values
+# witness-id
+# private-key
+
+#service $PROJECT start
