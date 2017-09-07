@@ -18,6 +18,7 @@ BRANCH=master
 BUILD_TYPE=Release
 WITNESS_NODE=bts-witness
 CLI_WALLET=bts-cli_wallet
+TRUSTED_BLOCKCHAIN_DATA=https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/blockchain.tar.gz
 
 echo "USER_NAME: $USER_NAME"
 echo "WITNESS_NAMES : $WITNESS_NAMES"
@@ -32,43 +33,19 @@ echo "BRANCH: $BRANCH"
 echo "BUILD_TYPE: $BUILD_TYPE"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
+echo "TRUSTED_BLOCKCHAIN_DATA: $TRUSTED_BLOCKCHAIN_DATA"
 
+##################################################################################################
+# Update Ubuntu, configure a swap file and install prerequisites for running BitShares                                  #
+##################################################################################################
 sudo apt-get -y update || exit 1;
-# To avoid intermittent issues with package DB staying locked when next apt-get runs
 sleep 5;
-
-##################################################################################################
-# Clone the python-bitshares project from the Xeroc source repository.                           #
-##################################################################################################
-apt -y install libffi-dev libssl-dev python-dev python3-pip
-pip3 install pip --upgrade
-cd /usr/local/src
-time git clone https://github.com/xeroc/python-bitshares.git
-cd python-bitshares
-pip3 install autobahn pycrypto graphenelib 
-python3 setup.py install --user
-
-##################################################################################################
-# Download the pre-compiled witness_node and cli_wallet provided by the trusted source for this  #
-# the GRAPHENE TEST.                                                                             #
-##################################################################################################
-#cd  /usr/bin/
-#time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/$WITNESS_NODE
-#chmod +x $WITNESS_NODE
-#
-#time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/$CLI_WALLET
-#chmod +x $CLI_WALLET
-#
-#mkdir /home/$USER_NAME/key_gen
-#cd /home/$USER_NAME/key_gen
-#time wget https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/testnet_cli_wallet
-#chmod +x testnet_cli_wallet
-
-##################################################################################################
-# Update Ubuntu and install prerequisites for running BitShares                                  #
-##################################################################################################
+sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
+sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
+sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2048/g' /etc/waagent.conf
+service walinuxagent restart
 time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev libssl-dev \
-                        openssl libreadline-dev autoconf libtool libboost-all-dev dphys-swapfile
+                        openssl libreadline-dev autoconf libtool libboost-all-dev
 
 ##################################################################################################
 # Build BitShares from source                                                                    #
@@ -117,17 +94,49 @@ TimeoutSec=300
 WantedBy=multi-user.target
 EOL
 
+##################################################################################################
+# Start the service, allowing it to create the default application configuration file. Stop the  #
+# service, modify the config.ini file, then restart the service to apply the new RPC settings.   #
+##################################################################################################
 systemctl daemon-reload
 systemctl enable $PROJECT
 service $PROJECT start
+sleep 5; # allow time to initializize application data
+service $PROJECT stop
+sed -i 's/# rpc-endpoint =/rpc-endpoint = '$LOCAL_IP':'$RPC_PORT'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
+sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
+service $PROJECT start
 
-# service $CLI_WALLET start
-# suggest_brain_key
-# get_witness $WITNESS_NAMES
+##################################################################################################
+# Connect to the CLI Wallet to generate a new keypair for use by the block producer as their     #
+# unique signing keys. This key pair will only be used on this node for signing blocks.          #
+##################################################################################################
+screen -dmS $CLI_WALLET /usr/bin/$CLI_WALLET -s ws://$LOCAL_IP:$RPC_PORT -H 127.0.0.1:8092
+sleep 2; # allow time to connect to RPC node
+WITNESS_KEY_PAIR=$(curl -s --data '{"jsonrpc": "2.0", "method": "suggest_brain_key", "params": [], "id": 1}' http://127.0.0.1:8092 | \
+    python3 -c "import sys, json; keys=json.load(sys.stdin); print('[\"'+keys['result']['pub_key']+'\",\"'+keys['result']['wif_priv_key']+'\"]')")
+WITNESS_ID=$(curl -s --data '{"jsonrpc": "2.0", "method": "get_witness", "params": ["'$WITNESS_NAMES'"], "id": 1}' http://127.0.0.1:8092 | \
+    python3 -c "import sys, json; print('\"'+json.load(sys.stdin)['result']['id']+'\"')")
+screen -S $CLI_WALLET -p 0 -X quit
+
+# Update the config.ini file with the new values.
+sed -i 's/# witness-id =/witness-id = '$WITNESS_ID'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
+sed -i 's/private-key =/private-key = '$WITNESS_KEY_PAIR' \nprivate-key =/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
+
+# Stop and restart the service to load the new settings.
 service $PROJECT stop
 
-# Modify config.ini to include witness values
-# witness-id
-# private-key
+##################################################################################################
+# OPTIONAL: Download a recent blockchain snapshot from a trusted source. The blockchain is large #
+# and will take many hours to validate using the trustless P2P network. A peer reviewed snapshot #
+# is provided to facilatate rapid node deployment.                                               # 
+##################################################################################################
+time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz -C /home/$USER_NAME/$PROJECT/witness_node/blockchain
 
-#service $PROJECT start
+service $PROJECT start
+
+##################################################################################################
+# This VM is now configured as a block producing node. However, it will not sign blocks until    #
+# the blochain receives a valid "update_witness" operation contianing the witness name and the   #
+# pub_key written into the congif.ini file. The pub_key starts with the prefix 'BTS' (never 5).  #
+##################################################################################################
