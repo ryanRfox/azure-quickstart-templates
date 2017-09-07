@@ -36,14 +36,15 @@ echo "CLI_WALLET: $CLI_WALLET"
 echo "TRUSTED_BLOCKCHAIN_DATA: $TRUSTED_BLOCKCHAIN_DATA"
 
 ##################################################################################################
-# Update Ubuntu, configure a swap file and install prerequisites for running BitShares                                  #
+# Update Ubuntu, configure a 2GiB swap file and install prerequisites for running BitShares      #
 ##################################################################################################
 sudo apt-get -y update || exit 1;
 sleep 5;
-sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
-sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
-sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2048/g' /etc/waagent.conf
-service walinuxagent restart
+fallocate -l 2g /mnt/2GiB.swap
+chmod 600 /mnt/2GiB.swap
+mkswap /mnt/2GiB.swap
+swapon /mnt/2GiB.swap
+echo '/mnt/2GiB.swap swap swap defaults 0 0' | tee -a /etc/fstab
 time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev libssl-dev \
                         openssl libreadline-dev autoconf libtool libboost-all-dev
 
