@@ -99,15 +99,13 @@ EOL
 
 ##################################################################################################
 # Start the service, allowing it to create the default application configuration file. Stop the  #
-# service, modify the config.ini file, then restart the service to apply the new RPC settings.   #
+# service to allow modification of the config.ini file.                                          #
 ##################################################################################################
 systemctl daemon-reload
 systemctl enable $PROJECT
 service $PROJECT start
 sleep 5; # allow time to initializize application data.
 service $PROJECT stop
-sed -i 's/# rpc-endpoint =/rpc-endpoint = '$LOCAL_IP':'$RPC_PORT'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
-sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 
 ##################################################################################################
 # Connect the local CLI Wallet to a public blockchain server and open a local RPC listener.      #
@@ -126,6 +124,8 @@ screen -S $CLI_WALLET -p 0 -X quit
 # Update the config.ini file with the new values.
 sed -i 's/# witness-id =/witness-id = '$WITNESS_ID'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 sed -i 's/private-key =/private-key = '$WITNESS_KEY_PAIR' \nprivate-key =/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
+sed -i 's/# rpc-endpoint =/rpc-endpoint = '$LOCAL_IP':'$RPC_PORT'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
+sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 
 ##################################################################################################
 # OPTIONAL: Download a recent blockchain snapshot from a trusted source. The blockchain is large #
@@ -133,9 +133,14 @@ sed -i 's/private-key =/private-key = '$WITNESS_KEY_PAIR' \nprivate-key =/g' /ho
 # is provided to facilatate rapid node deployment. Once the dowload is complete the service will #
 # start and load the remaining blocks from the P2P network as normal.                            #
 ##################################################################################################
+rm -rd /objec_database
+rm -rd /home/$USER_NAME/$PROJECT/witness_node/logs
+rm -rd /home/$USER_NAME/$PROJECT/witness_node/p2p
 rm -rd /home/$USER_NAME/$PROJECT/witness_node/blockchain
+mkdir /home/$USER_NAME/$PROJECT/witness_node/object_database
 mkdir /home/$USER_NAME/$PROJECT/witness_node/blockchain
-time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz -C /home/$USER_NAME/$PROJECT/witness_node/blockchain
+cd /home/$USER_NAME/$PROJECT/witness_node/
+time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz
 
 service $PROJECT start
 
