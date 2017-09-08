@@ -135,8 +135,11 @@ sleep 5; # allow time for service to terminate cleanly
 ##################################################################################################
 # OPTIONAL: Download a recent blockchain snapshot from a trusted source. The blockchain is large #
 # and will take many hours to validate using the trustless P2P network. A peer reviewed snapshot #
-# is provided to facilatate rapid node deployment.                                               # 
+# is provided to facilatate rapid node deployment. Once the dowload is complete the service will #
+# start and load the remaining blocks from the P2P network as normal.                            #
 ##################################################################################################
+rm -rd /home/$USER_NAME/$PROJECT/witness_node/blockchain
+mkdir /home/$USER_NAME/$PROJECT/witness_node/blockchain
 time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz -C /home/$USER_NAME/$PROJECT/witness_node/blockchain
 
 service $PROJECT start
