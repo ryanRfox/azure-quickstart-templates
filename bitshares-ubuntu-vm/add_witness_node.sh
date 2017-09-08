@@ -133,12 +133,11 @@ sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/confi
 # is provided to facilatate rapid node deployment. Once the dowload is complete the service will #
 # start and load the remaining blocks from the P2P network as normal.                            #
 ##################################################################################################
-rm -rd /objec_database
-rm -rd /home/$USER_NAME/$PROJECT/witness_node/logs
-rm -rd /home/$USER_NAME/$PROJECT/witness_node/p2p
-rm -rd /home/$USER_NAME/$PROJECT/witness_node/blockchain
-mkdir /home/$USER_NAME/$PROJECT/witness_node/object_database
-mkdir /home/$USER_NAME/$PROJECT/witness_node/blockchain
+mv /home/$USER_NAME/$PROJECT/witness_node/config.ini /home/$USER_NAME
+rm -rd /home/$USER_NAME/$PROJECT
+mkdir -p /home/$USER_NAME/$PROJECT/witness_node/object_database
+mkdir -p /home/$USER_NAME/$PROJECT/witness_node/blockchain
+mv /home/$USER_NAME/config.ini /home/$USER_NAME/$PROJECT/witness_node
 cd /home/$USER_NAME/$PROJECT/witness_node/
 time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz
 
