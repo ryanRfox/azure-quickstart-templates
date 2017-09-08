@@ -104,11 +104,10 @@ EOL
 systemctl daemon-reload
 systemctl enable $PROJECT
 service $PROJECT start
-sleep 5; # allow time to initializize application data
+sleep 5; # allow time to initializize application data.
 service $PROJECT stop
 sed -i 's/# rpc-endpoint =/rpc-endpoint = '$LOCAL_IP':'$RPC_PORT'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
-service $PROJECT start
 
 ##################################################################################################
 # Connect the local CLI Wallet to a public blockchain server and open a local RPC listener.      #
@@ -117,7 +116,7 @@ service $PROJECT start
 # This key pair will be used only as the signing key on this virtual machine.                    #
 ##################################################################################################
 screen -dmS $CLI_WALLET /usr/bin/$CLI_WALLET -s $PUBLIC_BLOCKCHAIN_SERVER -H 127.0.0.1:8092
-sleep 2; # allow time for CLI Wallet to connect to public blockchain server and open 
+sleep 4; # allow time for CLI Wallet to connect to public blockchain server and open local RPC listener.
 WITNESS_KEY_PAIR=$(curl -s --data '{"jsonrpc": "2.0", "method": "suggest_brain_key", "params": [], "id": 1}' http://127.0.0.1:8092 | \
     python3 -c "import sys, json; keys=json.load(sys.stdin); print('[\"'+keys['result']['pub_key']+'\",\"'+keys['result']['wif_priv_key']+'\"]')")
 WITNESS_ID=$(curl -s --data '{"jsonrpc": "2.0", "method": "get_witness", "params": ["'$WITNESS_NAMES'"], "id": 1}' http://127.0.0.1:8092 | \
@@ -127,10 +126,6 @@ screen -S $CLI_WALLET -p 0 -X quit
 # Update the config.ini file with the new values.
 sed -i 's/# witness-id =/witness-id = '$WITNESS_ID'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 sed -i 's/private-key =/private-key = '$WITNESS_KEY_PAIR' \nprivate-key =/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
-
-# Stop and restart the service to load the new settings.
-service $PROJECT stop
-sleep 5; # allow time for service to terminate cleanly
 
 ##################################################################################################
 # OPTIONAL: Download a recent blockchain snapshot from a trusted source. The blockchain is large #
