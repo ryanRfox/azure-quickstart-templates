@@ -18,6 +18,7 @@ BRANCH=master
 BUILD_TYPE=Release
 WITNESS_NODE=bts-witness
 CLI_WALLET=bts-cli_wallet
+PUBLIC_BLOCKCHAIN_SERVER=wss://bitshares.openledger.info/ws
 TRUSTED_BLOCKCHAIN_DATA=https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/blockchain.tar.gz
 
 echo "USER_NAME: $USER_NAME"
@@ -33,6 +34,7 @@ echo "BRANCH: $BRANCH"
 echo "BUILD_TYPE: $BUILD_TYPE"
 echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
+echo "PUBLIC_BLOCKCHAIN_SERVER: $PUBLIC_BLOCKCHAIN_SERVER"
 echo "TRUSTED_BLOCKCHAIN_DATA: $TRUSTED_BLOCKCHAIN_DATA"
 
 ##################################################################################################
@@ -109,11 +111,13 @@ sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/confi
 service $PROJECT start
 
 ##################################################################################################
-# Connect to the CLI Wallet to generate a new keypair for use by the block producer as their     #
-# unique signing keys. This key pair will only be used on this node for signing blocks.          #
+# Connect the local CLI Wallet to a public blockchain server and open a local RPC listener.      #
+# Connect to the local CLI Wallet to generate a new key pair for use locally by the block        #
+# producer. Configure the config.ini file with the new key pair and block producer identity.     #
+# This key pair will be used only as the signing key on this virtual machine.                    #
 ##################################################################################################
-screen -dmS $CLI_WALLET /usr/bin/$CLI_WALLET -s ws://$LOCAL_IP:$RPC_PORT -H 127.0.0.1:8092
-sleep 2; # allow time to connect to RPC node
+screen -dmS $CLI_WALLET /usr/bin/$CLI_WALLET -s $PUBLIC_BLOCKCHAIN_SERVER -H 127.0.0.1:8092
+sleep 2; # allow time for CLI Wallet to connect to public blockchain server and open 
 WITNESS_KEY_PAIR=$(curl -s --data '{"jsonrpc": "2.0", "method": "suggest_brain_key", "params": [], "id": 1}' http://127.0.0.1:8092 | \
     python3 -c "import sys, json; keys=json.load(sys.stdin); print('[\"'+keys['result']['pub_key']+'\",\"'+keys['result']['wif_priv_key']+'\"]')")
 WITNESS_ID=$(curl -s --data '{"jsonrpc": "2.0", "method": "get_witness", "params": ["'$WITNESS_NAMES'"], "id": 1}' http://127.0.0.1:8092 | \
@@ -126,6 +130,7 @@ sed -i 's/private-key =/private-key = '$WITNESS_KEY_PAIR' \nprivate-key =/g' /ho
 
 # Stop and restart the service to load the new settings.
 service $PROJECT stop
+sleep 5; # allow time for service to terminate cleanly
 
 ##################################################################################################
 # OPTIONAL: Download a recent blockchain snapshot from a trusted source. The blockchain is large #
