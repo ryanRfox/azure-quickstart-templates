@@ -19,7 +19,7 @@ BUILD_TYPE=Release
 WITNESS_NODE=bts-witness
 CLI_WALLET=bts-cli_wallet
 PUBLIC_BLOCKCHAIN_SERVER=wss://bitshares.openledger.info/ws
-TRUSTED_BLOCKCHAIN_DATA=https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/blockchain.tar.gz
+TRUSTED_BLOCKCHAIN_DATA=https://rfxblobstorageforpublic.blob.core.windows.net/rfxcontainerforpublic/bitshares-blockchain.tar.gz
 
 echo "USER_NAME: $USER_NAME"
 echo "WITNESS_NAMES : $WITNESS_NAMES"
@@ -134,8 +134,7 @@ sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/confi
 # start and load the remaining blocks from the P2P network as normal.                            #
 ##################################################################################################
 mv /home/$USER_NAME/$PROJECT/witness_node/config.ini /home/$USER_NAME
-rm -rd /home/$USER_NAME/$PROJECT
-mkdir -p /home/$USER_NAME/$PROJECT/witness_node
+rm -rf /home/$USER_NAME/$PROJECT/witness_node
 mv /home/$USER_NAME/config.ini /home/$USER_NAME/$PROJECT/witness_node
 cd /home/$USER_NAME/$PROJECT/witness_node
 time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz
