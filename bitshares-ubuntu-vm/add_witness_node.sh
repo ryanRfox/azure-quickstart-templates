@@ -135,10 +135,9 @@ sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/confi
 ##################################################################################################
 mv /home/$USER_NAME/$PROJECT/witness_node/config.ini /home/$USER_NAME
 rm -rd /home/$USER_NAME/$PROJECT
-mkdir -p /home/$USER_NAME/$PROJECT/witness_node/object_database
-mkdir -p /home/$USER_NAME/$PROJECT/witness_node/blockchain
+mkdir -p /home/$USER_NAME/$PROJECT/witness_node
 mv /home/$USER_NAME/config.ini /home/$USER_NAME/$PROJECT/witness_node
-cd /home/$USER_NAME/$PROJECT/witness_node/
+cd /home/$USER_NAME/$PROJECT/witness_node
 time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz
 
 service $PROJECT start
