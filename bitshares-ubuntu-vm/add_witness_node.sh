@@ -134,7 +134,7 @@ sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/confi
 # start and load the remaining blocks from the P2P network as normal.                            #
 ##################################################################################################
 mv /home/$USER_NAME/$PROJECT/witness_node/config.ini /home/$USER_NAME
-rm -rf /home/$USER_NAME/$PROJECT/witness_node
+rm -rfv /home/$USER_NAME/$PROJECT/witness_node/*
 mv /home/$USER_NAME/config.ini /home/$USER_NAME/$PROJECT/witness_node
 cd /home/$USER_NAME/$PROJECT/witness_node
 time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz
