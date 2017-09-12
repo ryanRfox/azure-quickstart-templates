@@ -5,6 +5,9 @@
     "dnsLabelPrefix": {
       "value": "GEN-UNIQUE-11"
     },
+    "vmSize": {
+      "value": "Standard_B2S"
+    },
     "adminUsername": {
       "value": "azureuser"
     },
@@ -14,8 +17,8 @@
     "accountNamesCommaDelimited": {
       "value": "listOfNames"
     },
-    "vmSize": {
-      "value": "Standard_A2"
+    "gitBranch": {
+      "value": "master"
     }
   }
 }

@@ -34,10 +34,22 @@
         "Standard_DS2_V2",
         "Standard_DS3_V2",
         "Standard_DS4_V2",
-        "Standard_H8"
+        "Standard_B2S"
       ],
       "metadata": {
         "description": "Size of VM"
+      }
+    },
+    "gitBranch": {
+      "type": "string",
+      "defaultValue": "master",
+      "allowedValues": [
+        "master",
+        "testnet",
+        "develop"
+      ],
+      "metadata": {
+        "description": "Brach of code to checout from github source respository. Public network is 'master'"
       }
     }
   },
@@ -242,7 +254,7 @@
           "fileUris": [
             "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/bts2-witness/bitshares-ubuntu-vm/add_witness_node.sh"
           ],
-          "commandToExecute": "[concat('sh add_witness_node.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn, ' ', parameters('accountNamesCommaDelimited'))]"
+          "commandToExecute": "[concat('sh add_witness_node.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn, ' ', parameters('accountNamesCommaDelimited'), ' ', parameters('gitBranch'))]"
         }
       }
     }
