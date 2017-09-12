@@ -56,7 +56,7 @@ time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev 
 cd /usr/local/src
 time git clone $GITHUB_REPOSITORY
 cd $PROJECT
-time git checkout $RELEASE
+time git checkout $BRANCH
 time git submodule update --init --recursive
 
 sed -i 's/add_subdirectory( tests )/#add_subdirectory( tests )/g' /usr/local/src/$PROJECT/CMakeLists.txt
@@ -133,11 +133,13 @@ sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/confi
 # is provided to facilatate rapid node deployment. Once the dowload is complete the service will #
 # start and load the remaining blocks from the P2P network as normal.                            #
 ##################################################################################################
+if (($BRANCH = "master")) ; then
 mv /home/$USER_NAME/$PROJECT/witness_node/config.ini /home/$USER_NAME
 rm -rfv /home/$USER_NAME/$PROJECT/witness_node/*
 mv /home/$USER_NAME/config.ini /home/$USER_NAME/$PROJECT/witness_node
 cd /home/$USER_NAME/$PROJECT/witness_node
 time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz
+fi
 
 service $PROJECT start
 
