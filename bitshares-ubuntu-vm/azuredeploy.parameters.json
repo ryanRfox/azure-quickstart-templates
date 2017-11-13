@@ -6,7 +6,7 @@
       "value": "GEN-UNIQUE-11"
     },
     "vmSize": {
-      "value": "Standard_B2S"
+      "value": "Standard_B2MS"
     },
     "adminUsername": {
       "value": "azureuser"
@@ -18,7 +18,7 @@
       "value": "listOfNames"
     },
     "gitBranch": {
-      "value": "master"
+      "value": "fc_updates"
     }
   }
 }

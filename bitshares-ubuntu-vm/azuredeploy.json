@@ -41,6 +41,19 @@
       "metadata": {
         "description": "Size of VM"
       }
+    },
+    "branch": {
+      "type": "string",
+      "defaultValue": "Github repository branch to checkout",
+      "allowedValues": [
+        "master",
+        "dev",
+        "bts-witness",
+        "fc_updates"
+      ],
+      "metadata": {
+        "description": "Size of VM"
+      }
     }
   },
   "variables": {
