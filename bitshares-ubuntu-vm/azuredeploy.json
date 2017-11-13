@@ -30,33 +30,23 @@
       "type": "string",
       "defaultValue": "Standard_DS2_V2",
       "allowedValues": [
+        "Standard_B2S",
+        "Standard_B2MS",
         "Standard_DS1_V2",
         "Standard_DS2_V2",
         "Standard_DS3_V2",
         "Standard_DS4_V2",
-        "Standard_B2S"
+        "Standard_H8"
       ],
       "metadata": {
         "description": "Size of VM"
-      }
-    },
-    "gitBranch": {
-      "type": "string",
-      "defaultValue": "master",
-      "allowedValues": [
-        "master",
-        "testnet",
-        "develop"
-      ],
-      "metadata": {
-        "description": "Brach of code to checout from github source respository. Public network is 'master'"
       }
     }
   },
   "variables": {
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
-    "imageSKU": "16.04.0-LTS",
+    "imageSKU": "17.10",
     "OSDiskName": "BitSharesOSDisk",
     "nicName": "BitSharesNic",
     "addressPrefix": "10.0.0.0/16",
@@ -103,6 +93,34 @@
               "destinationAddressPrefix": "*",
               "access": "Allow",
               "priority": 200,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "BitShares-RCP",
+            "properties": {
+              "description": "RPC port for hosting BitShares web service",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8899",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 210,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "BitShares-Web-Wallet",
+            "properties": {
+              "description": "NodeJS site hosting the BitShares web wallet",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 220,
               "direction": "Inbound"
             }
           },
@@ -252,9 +270,9 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/bts2-witness/bitshares-ubuntu-vm/add_witness_node.sh"
+            "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/dev/bitshares-ubuntu-vm/add_witness_node.sh"
           ],
-          "commandToExecute": "[concat('sh add_witness_node.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn, ' ', parameters('accountNamesCommaDelimited'), ' ', parameters('gitBranch'))]"
+          "commandToExecute": "[concat('sh add_witness_node.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn, ' ', parameters('accountNamesCommaDelimited'))]"
         }
       }
     }
