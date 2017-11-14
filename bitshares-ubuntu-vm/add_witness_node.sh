@@ -57,12 +57,12 @@ cd /usr/local/src
 time git clone $GITHUB_REPOSITORY
 cd $PROJECT
 time git checkout $BRANCH
+time git submodule update --init --recursive
 ##################################################################################################
 # TEST THE NEW FC BUILD HERE                                                                     #
 ##################################################################################################
 sed -i 's%bitshares/bitshares-fc%aautushka/bitshares-fc%g' /usr/local/src/$PROJECT/.gitmodules
 time git submodule update --remote libraries/fc
-time git submodule update --init --recursive
 
 sed -i 's%include_directories( vendor/equihash )%#include_directories( vendor/equihash )%g' /usr/local/src/$PROJECT/libraries/fc/CMakeLists.txt
 sed -i 's%src/crypto/equihash.cpp%#src/crypto/equihash.cpp%g' /usr/local/src/$PROJECT/libraries/fc/CMakeLists.txt
