@@ -9,7 +9,7 @@ USER_NAME=$1
 FQDN=$2
 WITNESS_NAMES=$3
 NPROC=$(nproc)
-LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
+LOCAL_IP=`ifconfig|xargs|awk '{print $6}'|sed -e 's/[a-z]*:/''/'`
 RPC_PORT=8090
 P2P_PORT=1776
 GITHUB_REPOSITORY=https://github.com/bitshares/bitshares-core.git
@@ -57,19 +57,15 @@ cd /usr/local/src
 time git clone $GITHUB_REPOSITORY
 cd $PROJECT
 time git checkout $BRANCH
-time git submodule update --init --recursive
 ##################################################################################################
 # TEST THE NEW FC BUILD HERE                                                                     #
 ##################################################################################################
-sed -i 's%bitshares/bitshares-fc%aautushka/bitshares-fc%g' /usr/local/src/$PROJECT/.gitmodules
-time git submodule update --remote libraries/fc
-
-sed -i 's%include_directories( vendor/equihash )%#include_directories( vendor/equihash )%g' /usr/local/src/$PROJECT/libraries/fc/CMakeLists.txt
-sed -i 's%src/crypto/equihash.cpp%#src/crypto/equihash.cpp%g' /usr/local/src/$PROJECT/libraries/fc/CMakeLists.txt
-sed -i 's%add_subdirectory( vendor/equihash )%#add_subdirectory( vendor/equihash )%g' /usr/local/src/$PROJECT/libraries/fc/CMakeLists.txt
-sed -i 's%${CMAKE_CURRENT_SOURCE_DIR}/vendor/equihash%#${CMAKE_CURRENT_SOURCE_DIR}/vendor/equihash%g' /usr/local/src/$PROJECT/libraries/fc/CMakeLists.txt
-sed -i 's%target_link_libraries( fc PUBLIC ${LINK_USR_LOCAL_LIB} equihash ${%target_link_libraries( fc PUBLIC ${LINK_USR_LOCAL_LIB} ${%g' /usr/local/src/$PROJECT/libraries/fc/CMakeLists.txt
-
+sed -i 's%bitshares/bitshares-fc%aautushka/bitshares-fc%g' /usr/local/src/$PROJECT/.gitmodules   #
+time git submodule update --init --recursive
+time git submodule update --remote libraries/fc                                                  #
+sed -i 's%template<typename T> class get_typename{};%template<typename... T> struct get_typename;%g' libraries/fc/include/fc/reflect/typename.hpp
+sed -i 's%template<typename... T> struct get_typename<T...>  { static const char* name()   { return typeid(static_variant<T...>).name();   } };%template<typename... T> struct get_typename  { static const char* name()   { return typeid(static_variant<T...>).name();   } };%g' libraries/fc/include/fc/static_variant.hpp
+##################################################################################################
 time cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE .
 time make -j$NPROC
 
@@ -109,11 +105,11 @@ service $PROJECT stop
 # producer. Configure the config.ini file with the new key pair and block producer identity.     #
 # This key pair will be used only as the signing key on this virtual machine.                    #
 ##################################################################################################
-screen -dmS $CLI_WALLET /usr/bin/$CLI_WALLET -s $PUBLIC_BLOCKCHAIN_SERVER -H 127.0.0.1:8092
+screen -dmS $CLI_WALLET /usr/bin/$CLI_WALLET --server-rpc-endpoint=$PUBLIC_BLOCKCHAIN_SERVER --rpc-http-endpoint=127.0.0.1:8093
 sleep 4; # allow time for CLI Wallet to connect to public blockchain server and open local RPC listener.
-WITNESS_KEY_PAIR=$(curl -s --data '{"jsonrpc": "2.0", "method": "suggest_brain_key", "params": [], "id": 1}' http://127.0.0.1:8092 | \
+WITNESS_KEY_PAIR=$(curl -s --data '{"jsonrpc": "2.0", "method": "suggest_brain_key", "params": [], "id": 1}' http://127.0.0.1:8093 | \
     python3 -c "import sys, json; keys=json.load(sys.stdin); print('[\"'+keys['result']['pub_key']+'\",\"'+keys['result']['wif_priv_key']+'\"]')")
-WITNESS_ID=$(curl -s --data '{"jsonrpc": "2.0", "method": "get_witness", "params": ["'$WITNESS_NAMES'"], "id": 1}' http://127.0.0.1:8092 | \
+WITNESS_ID=$(curl -s --data '{"jsonrpc": "2.0", "method": "get_witness", "params": ["'$WITNESS_NAMES'"], "id": 1}' http://127.0.0.1:8093 | \
     python3 -c "import sys, json; print('\"'+json.load(sys.stdin)['result']['id']+'\"')")
 screen -S $CLI_WALLET -p 0 -X quit
 
@@ -121,6 +117,7 @@ screen -S $CLI_WALLET -p 0 -X quit
 sed -i 's/# witness-id =/witness-id = '$WITNESS_ID'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 sed -i 's/private-key =/private-key = '$WITNESS_KEY_PAIR' \nprivate-key =/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 sed -i 's/# rpc-endpoint =/rpc-endpoint = '$LOCAL_IP':'$RPC_PORT'/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
+sed -i 's/# plugins =/plugins = witness/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/config.ini
 
 ##################################################################################################
