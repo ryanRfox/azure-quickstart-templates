@@ -60,7 +60,8 @@ time git checkout $BRANCH
 ##################################################################################################
 # TEST THE NEW FC BUILD HERE                                                                     #
 ##################################################################################################
-sed -i 's/bitshares/bitshares-fc/aautushka/bitshares-fc/g' /usr/local/src/$PROJECT/.gitmodule
+sed -i 's%bitshares/bitshares-fc%aautushka/bitshares-fc%g' /usr/local/src/$PROJECT/.gitmodules
+time git submodule update --remote libraries/fc
 time git submodule update --init --recursive
 
 sed -i 's%include_directories( vendor/equihash )%#include_directories( vendor/equihash )%g' /usr/local/src/$PROJECT/libraries/fc/CMakeLists.txt
