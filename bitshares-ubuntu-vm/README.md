@@ -5,4 +5,4 @@
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
-This template uses the Azure Linux CustomScript extension to deploy a block producing VM on the BitShares Network containing both a witness node and command line interface (CLI) wallet.  The deployment template creates an Ubuntu 16.04 LTS VM, installs the BitShares witness node and CLI wallet.  The project will build from github source and configure the node for block production.
+This template uses the Azure Linux CustomScript extension to deploy a block producing VM on the BitShares Network containing both a witness node and command line interface (CLI) wallet.  The deployment template creates an Ubuntu 17.10 VM, installs the BitShares witness node and CLI wallet.  The project will build from github source and configure the node for block production.
