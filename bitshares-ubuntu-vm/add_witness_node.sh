@@ -10,7 +10,7 @@ FQDN=$2
 WITNESS_NAMES=$3
 LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 NPROC=$(nproc)
-UBUNTU_VERSION=$5
+UBUNTU_VERSION=$4
 if (($UBUNTU_VERSION = "17.10")) ; then
 LOCAL_IP=`ifconfig|xargs|awk '{print $6}'|sed -e 's/[a-z]*:/''/'`
 fi
@@ -18,7 +18,7 @@ RPC_PORT=8090
 P2P_PORT=1776
 GITHUB_REPOSITORY=https://github.com/bitshares/bitshares-core.git
 PROJECT=bitshares-core
-BRANCH=$4
+BRANCH=$5
 BUILD_TYPE=Release
 WITNESS_NODE=bts-witness
 CLI_WALLET=bts-cli_wallet
