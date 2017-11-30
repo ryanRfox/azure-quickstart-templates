@@ -8,11 +8,12 @@ ps axjf
 USER_NAME=$1
 FQDN=$2
 WITNESS_NAMES=$3
-LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 NPROC=$(nproc)
 UBUNTU_VERSION=$4
-if (($UBUNTU_VERSION = "17.10")) ; then
-LOCAL_IP=`ifconfig|xargs|awk '{print $6}'|sed -e 's/[a-z]*:/''/'`
+if [ $UBUNTU_VERSION = "17.10" ]; then
+    LOCAL_IP=`ifconfig|xargs|awk '{print $6}'|sed -e 's/[a-z]*:/''/'`
+else
+    LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 fi
 RPC_PORT=8090
 P2P_PORT=1776
@@ -65,19 +66,19 @@ cd $PROJECT
 time git checkout $BRANCH
 time git submodule update --init --recursive
 
-if (($BRANCH = "master")) ; then
-##################################################################################################
-# APPLY NEW FC BUILD HERE (already included in develop branch)                                   #
-##################################################################################################
-sed -i 's%bitshares/bitshares-fc%aautushka/bitshares-fc%g' /usr/local/src/$PROJECT/.gitmodules
-time git submodule update --remote libraries/fc
+if [ "$BRANCH" = "master" ]; then
+    ##################################################################################################
+    # APPLY NEW FC BUILD HERE (already included in develop branch)                                   #
+    ##################################################################################################
+    sed -i 's%bitshares/bitshares-fc%aautushka/bitshares-fc%g' /usr/local/src/$PROJECT/.gitmodules
+    time git submodule update --remote libraries/fc
 
-##################################################################################################
-# APPLY UPDATE FOR GCC 7.2 BUILD ERRORS HERE (already included in the develop branch)            #
-##################################################################################################
-sed -i 's%template<typename T> class get_typename{};%template<typename... T> struct get_typename;%g' libraries/fc/include/fc/reflect/typename.hpp
-sed -i 's%template<typename... T> struct get_typename<T...>  { static const char* name()   { return typeid(static_variant<T...>).name();   } };%template<typename... T> struct get_typename  { static const char* name()   { return typeid(static_variant<T...>).name();   } };%g' libraries/fc/include/fc/static_variant.hpp
-##################################################################################################
+    ##################################################################################################
+    # APPLY UPDATE FOR GCC 7.2 BUILD ERRORS HERE (already included in the develop branch)            #
+    ##################################################################################################
+    sed -i 's%template<typename T> class get_typename{};%template<typename... T> struct get_typename;%g' libraries/fc/include/fc/reflect/typename.hpp
+    sed -i 's%template<typename... T> struct get_typename<T...>  { static const char* name()   { return typeid(static_variant<T...>).name();   } };%template<typename... T> struct get_typename  { static const char* name()   { return typeid(static_variant<T...>).name();   } };%g' libraries/fc/include/fc/static_variant.hpp
+    ##################################################################################################
 fi
 
 time cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE .
@@ -140,12 +141,12 @@ sed -i 's/level=debug/level=info/g' /home/$USER_NAME/$PROJECT/witness_node/confi
 # is provided to facilatate rapid node deployment. Once the dowload is complete the service will #
 # start and load the remaining blocks from the P2P network as normal.                            #
 ##################################################################################################
-if (($BRANCH = "master")) ; then
-mv /home/$USER_NAME/$PROJECT/witness_node/config.ini /home/$USER_NAME
-rm -rfv /home/$USER_NAME/$PROJECT/witness_node/*
-mv /home/$USER_NAME/config.ini /home/$USER_NAME/$PROJECT/witness_node
-cd /home/$USER_NAME/$PROJECT/witness_node
-time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz
+if [ "$BRANCH" = "master" ]; then
+    mv /home/$USER_NAME/$PROJECT/witness_node/config.ini /home/$USER_NAME
+    rm -rfv /home/$USER_NAME/$PROJECT/witness_node/*
+    mv /home/$USER_NAME/config.ini /home/$USER_NAME/$PROJECT/witness_node
+    cd /home/$USER_NAME/$PROJECT/witness_node
+    time wget -qO- $TRUSTED_BLOCKCHAIN_DATA | tar xvz
 fi
 
 service $PROJECT start
