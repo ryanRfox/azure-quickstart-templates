@@ -8,12 +8,12 @@ ps axjf
 USER_NAME=$1
 FQDN=$2
 WITNESS_NAMES=$3
+LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
 NPROC=$(nproc)
+UBUNTU_VERSION=$5
+if (($UBUNTU_VERSION = "17.10")) ; then
 LOCAL_IP=`ifconfig|xargs|awk '{print $6}'|sed -e 's/[a-z]*:/''/'`
-# UBUNTU_VERSION=$5
-# if (($UBUNTU_VERSION = "16.04 LTS")) ; then
-# LOCAL_IP=`ifconfig|xargs|awk '{print $7}'|sed -e 's/[a-z]*:/''/'`
-# fi
+fi
 RPC_PORT=8090
 P2P_PORT=1776
 GITHUB_REPOSITORY=https://github.com/bitshares/bitshares-core.git
@@ -40,6 +40,7 @@ echo "WITNESS_NODE: $WITNESS_NODE"
 echo "CLI_WALLET: $CLI_WALLET"
 echo "PUBLIC_BLOCKCHAIN_SERVER: $PUBLIC_BLOCKCHAIN_SERVER"
 echo "TRUSTED_BLOCKCHAIN_DATA: $TRUSTED_BLOCKCHAIN_DATA"
+echo "UBUNTU_VERSION: $UBUNTU_VERSION"
 
 ##################################################################################################
 # Update Ubuntu, configure a 2GiB swap file and install prerequisites for running BitShares      #
@@ -68,7 +69,7 @@ if (($BRANCH = "master")) ; then
 # APPLY NEW FC BUILD HERE (already included in develop branch)                                   #
 ##################################################################################################
 sed -i 's%bitshares/bitshares-fc%aautushka/bitshares-fc%g' /usr/local/src/$PROJECT/.gitmodules
-#time git submodule update --remote libraries/fc
+time git submodule update --remote libraries/fc
 
 ##################################################################################################
 # APPLY UPDATE FOR GCC 7.2 BUILD ERRORS HERE (already included in the develop branch)            #
