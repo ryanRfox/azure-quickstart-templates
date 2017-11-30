@@ -53,7 +53,8 @@ mkswap /mnt/2GiB.swap
 swapon /mnt/2GiB.swap
 echo '/mnt/2GiB.swap swap swap defaults 0 0' | tee -a /etc/fstab
 time apt-get -y install ntp g++ git make cmake libbz2-dev libdb++-dev libdb-dev libssl-dev \
-                        openssl libreadline-dev autoconf libtool libboost-all-dev
+                        openssl libreadline-dev autoconf libtool libcurl4-openssl-dev \
+                        libboost-all-dev
 
 ##################################################################################################
 # Build BitShares from source                                                                    #
