@@ -45,15 +45,13 @@
     },
     "branch": {
       "type": "string",
-      "defaultValue": "Github repository branch to checkout",
+      "defaultValue": "master",
       "allowedValues": [
         "master",
-        "dev",
-        "bts-witness",
-        "fc_updates"
+        "develop"
       ],
       "metadata": {
-        "description": "Size of VM"
+        "description": "Github repository branch to checkout"
       }
     }
   },
