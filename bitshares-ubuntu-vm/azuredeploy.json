@@ -295,7 +295,7 @@
           "fileUris": [
             "https://raw.githubusercontent.com/ryanRfox/azure-quickstart-templates/fc_updates/bitshares-ubuntu-vm/add_witness_node.sh"
           ],
-          "commandToExecute": "[concat('sh add_witness_node.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn, ' ', parameters('accountNamesCommaDelimited'), ' ', variables('imageSKU')]"
+          "commandToExecute": "[concat('sh add_witness_node.sh ', parameters('adminUsername'), ' ', reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn, ' ', parameters('accountNamesCommaDelimited'), ' ', variables('imageSKU'))]"
         }
       }
     }
